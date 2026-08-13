@@ -42,7 +42,7 @@
       min-height: 100vh;
     }
 
-    /* 頂部 Header - Tokyo DisneySea 25th Sparkling Jubilee 蒂芬妮藍綠漸層 */
+    /* 頂部 Header */
     .header {
       background: linear-gradient(135deg, #005b66 0%, #00808a 50%, #00a896 100%);
       color: #ffffff;
@@ -63,6 +63,15 @@
       letter-spacing: 0.5px;
       color: #ffffff;
       text-shadow: 0 2px 6px rgba(0, 60, 70, 0.4);
+    }
+
+    /* 導覽頁面切換 */
+    .page-view {
+      display: none;
+    }
+
+    .page-view.active {
+      display: block;
     }
 
     /* 天數橫向導覽列 */
@@ -98,15 +107,7 @@
       box-shadow: 0 4px 12px rgba(0, 109, 119, 0.3);
     }
 
-    .page-view {
-      display: none;
-    }
-
-    .page-view.active {
-      display: block;
-    }
-
-    /* 時間軸區域 */
+    /* 行程時間軸 */
     .timeline-container {
       padding: 8px 16px 20px 16px;
       position: relative;
@@ -154,7 +155,6 @@
       flex-shrink: 0;
     }
 
-    /* 行程卡片 */
     .card {
       flex: 1;
       background-color: #ffffff;
@@ -210,19 +210,298 @@
       word-break: break-all;
     }
 
-    /* 記帳頁面樣式 */
+    /* ==================== 記帳頁面專用樣式 ==================== */
     .accounting-container {
-      padding: 24px 20px;
-      text-align: center;
-      color: #64748b;
+      padding: 16px;
     }
 
-    .accounting-card {
+    /* 總支出 Banner */
+    .total-banner {
+      background: linear-gradient(135deg, #005b66 0%, #00808a 100%);
+      color: #ffffff;
+      padding: 18px;
+      border-radius: 18px;
+      text-align: center;
+      box-shadow: 0 4px 12px rgba(0, 91, 102, 0.25);
+      margin-bottom: 12px;
+    }
+
+    .total-banner-label {
+      font-size: 13px;
+      opacity: 0.9;
+      margin-bottom: 4px;
+    }
+
+    .total-banner-amount {
+      font-size: 26px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+    }
+
+    /* 查看結算按鈕 */
+    .settle-btn {
+      width: 100%;
+      padding: 12px;
+      background-color: #ffffff;
+      border: 1.5px solid #00808a;
+      color: #00808a;
+      font-size: 14px;
+      font-weight: 700;
+      border-radius: 16px;
+      cursor: pointer;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 8px rgba(0, 128, 138, 0.08);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* 表單區塊 */
+    .form-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 2px 12px rgba(0, 109, 119, 0.06);
+      border: 1px solid #e6f4f1;
+      margin-bottom: 20px;
+    }
+
+    .form-title {
+      font-size: 16px;
+      font-weight: 700;
+      color: #0f172a;
+      text-align: center;
+      margin-bottom: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-label {
+      font-size: 12px;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 6px;
+      display: block;
+    }
+
+    .form-row {
+      display: flex;
+      gap: 10px;
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 14px;
+      outline: none;
+      background-color: #f8fafc;
+      color: #0f172a;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: #00808a;
+      background-color: #ffffff;
+    }
+
+    /* 金額輸入區塊帶幣別與支付方式 */
+    .amount-input-group {
+      display: flex;
+      gap: 8px;
+    }
+
+    .currency-select, .method-select {
+      width: 90px;
+      flex-shrink: 0;
+      font-weight: 700;
+      background-color: #f0fdfa;
+      border-color: #99f6e4;
+      color: #0f766e;
+    }
+
+    /* 區塊內嵌卡片 (代墊/分帳) */
+    .inner-box {
+      background-color: #f8fafc;
+      border: 1px solid #f1f5f9;
+      border-radius: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+
+    .checkbox-group {
+      display: flex;
+      gap: 20px;
+      margin-top: 8px;
+    }
+
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+    }
+
+    .checkbox-label input {
+      width: 18px;
+      height: 18px;
+      accent-color: #00808a;
+    }
+
+    /* 新增按鈕 */
+    .submit-btn {
+      width: 100%;
+      padding: 13px;
+      background: linear-gradient(135deg, #005b66 0%, #00808a 100%);
+      color: #ffffff;
+      font-size: 15px;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0, 91, 102, 0.25);
+    }
+
+    /* 歷史帳單標題與篩選 */
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .history-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .date-filter-select {
+      padding: 6px 10px;
+      font-size: 12px;
+      border-radius: 12px;
+      border: 1px solid #cbd5e1;
+      background-color: #ffffff;
+      color: #334155;
+    }
+
+    /* 歷史帳單卡片 */
+    .history-item {
       background: #ffffff;
       border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      border: 1px solid #f1f5f9;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .history-info-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .history-info-sub {
+      font-size: 12px;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    .history-amount-box {
+      text-align: right;
+    }
+
+    .history-amount {
+      font-size: 15px;
+      font-weight: 800;
+      color: #00808a;
+    }
+
+    .history-actions {
+      margin-top: 4px;
+      display: flex;
+      gap: 6px;
+      justify-content: flex-end;
+    }
+
+    .action-btn {
+      background: none;
+      border: none;
+      font-size: 14px;
+      cursor: pointer;
+      padding: 2px 4px;
+      opacity: 0.7;
+    }
+
+    .action-btn:hover {
+      opacity: 1;
+    }
+
+    /* Modal 彈窗 (結算方案) */
+    .modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 100;
+      justify-content: center;
+      align-items: center;
       padding: 20px;
-      margin-top: 10px;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    .modal-overlay.active {
+      display: flex;
+    }
+
+    .modal-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px;
+      width: 100%;
+      max-width: 360px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+
+    .modal-content {
+      font-size: 14px;
+      color: #334155;
+      line-height: 1.6;
+      margin-bottom: 20px;
+      background: #f8fafc;
+      padding: 12px;
+      border-radius: 12px;
+    }
+
+    .modal-close-btn {
+      width: 100%;
+      padding: 10px;
+      background-color: #00808a;
+      color: #ffffff;
+      border: none;
+      border-radius: 12px;
+      font-weight: 700;
+      cursor: pointer;
     }
 
     /* 底部 Tab 列 */
@@ -281,13 +560,98 @@
     <!-- 2. 記帳頁面 -->
     <div id="pageAccounting" class="page-view">
       <div class="accounting-container">
-        <h3>💰 旅費記帳區域</h3>
-        <div class="accounting-card">
-          <p>（這裡之後可以新增公費、個人消費明細與匯率計算功能）</p>
+        
+        <!-- 總支出 -->
+        <div class="total-banner">
+          <div class="total-banner-label">目前總支出 (已折算台幣)</div>
+          <div class="total-banner-amount" id="totalAmountText">NT$ 0</div>
         </div>
+
+        <!-- 查看結算方案按鈕 -->
+        <button class="settle-btn" onclick="openSettleModal()">
+          💸 查看最終結算方案
+        </button>
+
+        <!-- 新增花費表單 -->
+        <div class="form-card">
+          <div class="form-title">✨ 新增一筆花費</div>
+          
+          <div class="form-row form-group">
+            <div style="flex: 1;">
+              <label class="form-label">日期</label>
+              <input type="date" id="expenseDate" class="form-input">
+            </div>
+            <div style="flex: 1;">
+              <label class="form-label">時間</label>
+              <input type="time" id="expenseTime" class="form-input">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">項目名稱</label>
+            <input type="text" id="expenseTitle" class="form-input" placeholder="例如：迪士尼髮箍 / 晚餐燒肉">
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">總金額 & 支付方式 (必填)</label>
+            <div class="amount-input-group">
+              <select id="expenseCurrency" class="form-select currency-select">
+                <option value="TWD">NT$</option>
+                <option value="JPY" selected>¥ 日幣</option>
+              </select>
+              <input type="number" id="expenseAmount" class="form-input" placeholder="0" inputmode="decimal">
+              <select id="expenseMethod" class="form-select method-select">
+                <option value="現金">現金</option>
+                <option value="刷卡">刷卡</option>
+                <option value="PayPay">PayPay</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- 誰代墊 -->
+          <div class="inner-box">
+            <label class="form-label">💳 誰代的墊？</label>
+            <select id="expensePayer" class="form-select">
+              <option value="Lily">Lily</option>
+              <option value="陳">陳</option>
+            </select>
+          </div>
+
+          <!-- 怎麼分帳 -->
+          <div class="inner-box">
+            <label class="form-label">🍔 參與平分的人：</label>
+            <div class="checkbox-group">
+              <label class="checkbox-label">
+                <input type="checkbox" id="splitLily" checked> Lily
+              </label>
+              <label class="checkbox-label">
+                <input type="checkbox" id="splitChen" checked> 陳
+              </label>
+            </div>
+          </div>
+
+          <button class="submit-btn" onclick="addExpense()">新增入帳</button>
+        </div>
+
+        <!-- 歷史帳單列表與篩選 -->
+        <div class="history-header">
+          <div class="history-title">📑 歷史帳單</div>
+          <select id="historyDateFilter" class="date-filter-select" onchange="renderHistory()">
+            <option value="ALL">全部日期</option>
+            <option value="2026-08-31">8/31 (Day 1)</option>
+            <option value="2026-09-01">9/01 (Day 2)</option>
+            <option value="2026-09-02">9/02 (Day 3)</option>
+            <option value="2026-09-03">9/03 (Day 4)</option>
+            <option value="2026-09-04">9/04 (Day 5)</option>
+          </select>
+        </div>
+
+        <div id="historyList"></div>
+
       </div>
     </div>
 
+    <!-- 底部 Tab 列 -->
     <nav class="bottom-nav">
       <button class="bottom-tab active" onclick="switchTab('itinerary')">
         <span class="tab-icon">🗺️</span>
@@ -300,7 +664,19 @@
     </nav>
   </div>
 
+  <!-- 結算方案 Modal 彈窗 -->
+  <div class="modal-overlay" id="settleModal">
+    <div class="modal-card">
+      <div class="modal-title">📊 最終分帳結算</div>
+      <div class="modal-content" id="settleModalContent">
+        計算中...
+      </div>
+      <button class="modal-close-btn" onclick="closeSettleModal()">關閉</button>
+    </div>
+  </div>
+
   <script>
+    /* ==================== 行程資料 ==================== */
     const itineraryData = [
       {
         dayLabel: "Day 1 (8/31)",
@@ -499,7 +875,6 @@
     ];
 
     let currentDayIndex = 0;
-
     const daysNav = document.getElementById("daysNav");
     const timelineList = document.getElementById("timelineList");
 
@@ -513,7 +888,6 @@
 
     function renderTimeline() {
       const dayData = itineraryData[currentDayIndex];
-      
       timelineList.innerHTML = dayData.events.map(event => {
         const mapSearchUrl = event.location 
           ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}` 
@@ -560,8 +934,209 @@
       }
     }
 
+    /* ==================== 記帳核心邏輯 ==================== */
+    const JPY_RATE = 0.21; // 日幣轉台幣估算匯率
+    let expenses = JSON.parse(localStorage.getItem('tokyo_expenses')) || [];
+
+    // 初始化日期與時間欄位為當前時間
+    function initFormDateTime() {
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+
+      document.getElementById('expenseDate').value = `${year}-${month}-${day}`;
+      document.getElementById('expenseTime').value = `${hours}:${minutes}`;
+    }
+
+    // 新增花費
+    function addExpense() {
+      const date = document.getElementById('expenseDate').value;
+      const time = document.getElementById('expenseTime').value;
+      const title = document.getElementById('expenseTitle').value.trim();
+      const amount = parseFloat(document.getElementById('expenseAmount').value);
+      const currency = document.getElementById('expenseCurrency').value;
+      const method = document.getElementById('expenseMethod').value;
+      const payer = document.getElementById('expensePayer').value;
+
+      const splitLily = document.getElementById('splitLily').checked;
+      const splitChen = document.getElementById('splitChen').checked;
+
+      if (!title) {
+        alert('請輸入項目名稱！');
+        return;
+      }
+      if (isNaN(amount) || amount <= 0) {
+        alert('請輸入有效的金額！');
+        return;
+      }
+
+      const participants = [];
+      if (splitLily) participants.push('Lily');
+      if (splitChen) participants.push('陳');
+
+      if (participants.length === 0) {
+        alert('請至少選擇一位參與平分的人！');
+        return;
+      }
+
+      const newExpense = {
+        id: Date.now(),
+        date,
+        time,
+        title,
+        amount,
+        currency,
+        method,
+        payer,
+        participants
+      };
+
+      expenses.push(newExpense);
+      saveAndRender();
+
+      // 清空表單
+      document.getElementById('expenseTitle').value = '';
+      document.getElementById('expenseAmount').value = '';
+    }
+
+    // 刪除花費
+    function deleteExpense(id) {
+      if (confirm('確定要刪除這筆花費嗎？')) {
+        expenses = expenses.filter(item => item.id !== id);
+        saveAndRender();
+      }
+    }
+
+    // 儲存至 LocalStorage 並重繪
+    function saveAndRender() {
+      localStorage.setItem('tokyo_expenses', JSON.stringify(expenses));
+      renderHistory();
+      calculateTotals();
+    }
+
+    // 渲染歷史紀錄列表
+    function renderHistory() {
+      const historyList = document.getElementById('historyList');
+      const filterDate = document.getElementById('historyDateFilter').value;
+
+      let filtered = [...expenses];
+      if (filterDate !== 'ALL') {
+        filtered = filtered.filter(item => item.date === filterDate);
+      }
+
+      // 按日期與時間倒序排列
+      filtered.sort((a, b) => {
+        const dateTimeA = `${a.date} ${a.time}`;
+        const dateTimeB = `${b.date} ${b.time}`;
+        return dateTimeB.localeCompare(dateTimeA);
+      });
+
+      if (filtered.length === 0) {
+        historyList.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px; font-size:13px;">尚無花費紀錄</div>`;
+        return;
+      }
+
+      historyList.innerHTML = filtered.map(item => {
+        const symbol = item.currency === 'TWD' ? 'NT$' : '¥';
+        const participantsText = item.participants.join('、');
+        
+        return `
+          <div class="history-item">
+            <div>
+              <div class="history-info-title">${item.title}</div>
+              <div class="history-info-sub">📅 ${item.date} ${item.time} (${item.method})</div>
+              <div class="history-info-sub">💳 ${item.payer} 代墊 ｜ 🍔 分帳：${participantsText}</div>
+            </div>
+            <div class="history-amount-box">
+              <div class="history-amount">${symbol} ${item.amount.toLocaleString()}</div>
+              <div class="history-actions">
+                <button class="action-btn" onclick="deleteExpense(${item.id})">🗑️</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // 計算總支出（自動折算台幣）
+    function calculateTotals() {
+      let totalTWD = 0;
+
+      expenses.forEach(item => {
+        if (item.currency === 'TWD') {
+          totalTWD += item.amount;
+        } else {
+          totalTWD += item.amount * JPY_RATE;
+        }
+      });
+
+      document.getElementById('totalAmountText').innerText = `NT$ ${Math.round(totalTWD).toLocaleString()}`;
+    }
+
+    // 計算最終分帳結算
+    function openSettleModal() {
+      let lilyPaidTWD = 0;
+      let chenPaidTWD = 0;
+      let lilyOwesTWD = 0;
+      let chenOwesTWD = 0;
+
+      expenses.forEach(item => {
+        const amountTWD = item.currency === 'TWD' ? item.amount : item.amount * JPY_RATE;
+        
+        // 誰付的錢
+        if (item.payer === 'Lily') lilyPaidTWD += amountTWD;
+        if (item.payer === '陳') chenPaidTWD += amountTWD;
+
+        // 誰應該分負擔
+        const splitCount = item.participants.length;
+        const shareTWD = amountTWD / splitCount;
+
+        if (item.participants.includes('Lily')) lilyOwesTWD += shareTWD;
+        if (item.participants.includes('陳')) chenOwesTWD += shareTWD;
+      });
+
+      // 淨值計算 (付出的 - 應該負擔的)
+      const lilyNet = lilyPaidTWD - lilyOwesTWD;
+      const chenNet = chenPaidTWD - chenOwesTWD;
+
+      let resultText = '';
+
+      if (expenses.length === 0) {
+        resultText = '目前尚無花費紀錄。';
+      } else if (Math.abs(lilyNet) < 1) {
+        resultText = '🎉 雙方金額剛好平衡，不需要再互相轉帳！';
+      } else if (lilyNet > 0) {
+        // Lily 多付了，陳要給 Lily 錢
+        resultText = `<strong>陳</strong> 需要給 <strong>Lily</strong>：<br><span style="font-size:22px; color:#00808a; font-weight:800;">NT$ ${Math.round(Math.abs(lilyNet)).toLocaleString()}</span>`;
+      } else {
+        // 陳多付了，Lily 要給 陳 錢
+        resultText = `<strong>Lily</strong> 需要給 <strong>陳</strong>：<br><span style="font-size:22px; color:#00808a; font-weight:800;">NT$ ${Math.round(Math.abs(chenNet)).toLocaleString()}</span>`;
+      }
+
+      const modalContent = `
+        <div style="margin-bottom:10px;">• Lily 總代墊：NT$ ${Math.round(lilyPaidTWD).toLocaleString()}</div>
+        <div style="margin-bottom:14px;">• 陳 總代墊：NT$ ${Math.round(chenPaidTWD).toLocaleString()}</div>
+        <hr style="border:none; border-top:1px dashed #cbd5e1; margin:10px 0;">
+        <div style="text-align:center; padding:10px 0;">${resultText}</div>
+        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-top:6px;">* 日幣金額依預設匯率 ${JPY_RATE} 折算台幣</div>
+      `;
+
+      document.getElementById('settleModalContent').innerHTML = modalContent;
+      document.getElementById('settleModal').classList.add('active');
+    }
+
+    function closeSettleModal() {
+      document.getElementById('settleModal').classList.remove('active');
+    }
+
+    // 初始渲染
     renderDayButtons();
     renderTimeline();
+    initFormDateTime();
+    saveAndRender();
   </script>
 </body>
 </html>
