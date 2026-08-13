@@ -215,6 +215,47 @@
       padding: 16px;
     }
 
+    /* 匯率設定列 */
+    .rate-bar {
+      background-color: #ffffff;
+      border-radius: 14px;
+      padding: 10px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+      box-shadow: 0 2px 8px rgba(0, 128, 138, 0.06);
+      border: 1px solid #ccfbf1;
+    }
+
+    .rate-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .rate-input-box {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .rate-input {
+      width: 65px;
+      padding: 4px 8px;
+      border: 1px solid #99f6e4;
+      border-radius: 8px;
+      font-size: 13px;
+      font-weight: 700;
+      text-align: center;
+      color: #0f766e;
+      background-color: #f0fdfa;
+      outline: none;
+    }
+
     /* 總支出 Banner */
     .total-banner {
       background: linear-gradient(135deg, #005b66 0%, #00808a 100%);
@@ -561,13 +602,22 @@
     <div id="pageAccounting" class="page-view">
       <div class="accounting-container">
         
+        <!-- 匯率設定列 -->
+        <div class="rate-bar">
+          <div class="rate-label">💱 日幣估算匯率設定</div>
+          <div class="rate-input-box">
+            <span>¥1 = NT$</span>
+            <input type="number" id="jpyRateInput" class="rate-input" step="0.001" value="0.21" onchange="updateCustomRate()">
+          </div>
+        </div>
+
         <!-- 總支出 -->
         <div class="total-banner">
           <div class="total-banner-label">目前總支出 (已折算台幣)</div>
           <div class="total-banner-amount" id="totalAmountText">NT$ 0</div>
         </div>
 
-        <!-- 查看結算方案按鈕 -->
+        <!-- 查看結算按鈕 -->
         <button class="settle-btn" onclick="openSettleModal()">
           💸 查看最終結算方案
         </button>
@@ -934,9 +984,27 @@
       }
     }
 
-    /* ==================== 記帳核心邏輯 ==================== */
-    const JPY_RATE = 0.21; // 日幣轉台幣估算匯率
+    /* ==================== 記帳核心邏輯 (支援自訂匯率) ==================== */
+    let jpyRate = parseFloat(localStorage.getItem('tokyo_jpy_rate')) || 0.21;
     let expenses = JSON.parse(localStorage.getItem('tokyo_expenses')) || [];
+
+    // 初始化匯率欄位
+    function initRateInput() {
+      document.getElementById('jpyRateInput').value = jpyRate;
+    }
+
+    // 更新自訂匯率
+    function updateCustomRate() {
+      const inputVal = parseFloat(document.getElementById('jpyRateInput').value);
+      if (!isNaN(inputVal) && inputVal > 0) {
+        jpyRate = inputVal;
+        localStorage.setItem('tokyo_jpy_rate', jpyRate);
+        calculateTotals();
+      } else {
+        alert('請輸入有效的匯率！');
+        document.getElementById('jpyRateInput').value = jpyRate;
+      }
+    }
 
     // 初始化日期與時間欄位為當前時間
     function initFormDateTime() {
@@ -1069,7 +1137,7 @@
         if (item.currency === 'TWD') {
           totalTWD += item.amount;
         } else {
-          totalTWD += item.amount * JPY_RATE;
+          totalTWD += item.amount * jpyRate;
         }
       });
 
@@ -1084,7 +1152,7 @@
       let chenOwesTWD = 0;
 
       expenses.forEach(item => {
-        const amountTWD = item.currency === 'TWD' ? item.amount : item.amount * JPY_RATE;
+        const amountTWD = item.currency === 'TWD' ? item.amount : item.amount * jpyRate;
         
         // 誰付的錢
         if (item.payer === 'Lily') lilyPaidTWD += amountTWD;
@@ -1121,7 +1189,7 @@
         <div style="margin-bottom:14px;">• 陳 總代墊：NT$ ${Math.round(chenPaidTWD).toLocaleString()}</div>
         <hr style="border:none; border-top:1px dashed #cbd5e1; margin:10px 0;">
         <div style="text-align:center; padding:10px 0;">${resultText}</div>
-        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-top:6px;">* 日幣金額依預設匯率 ${JPY_RATE} 折算台幣</div>
+        <div style="font-size:11px; color:#94a3b8; text-align:center; margin-top:6px;">* 日幣金額依當前設定匯率 ${jpyRate} 折算台幣</div>
       `;
 
       document.getElementById('settleModalContent').innerHTML = modalContent;
@@ -1135,6 +1203,7 @@
     // 初始渲染
     renderDayButtons();
     renderTimeline();
+    initRateInput();
     initFormDateTime();
     saveAndRender();
   </script>
