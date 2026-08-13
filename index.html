@@ -2,12 +2,9 @@
 <html lang="zh-TW">
 <head>
   <meta charset="UTF-8">
-  <!-- 1. 關鍵：鎖定手機畫面、禁止縮放、適應全螢幕/瀏海屏 -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-  
-  <title>東京自由行</title>
+  <title>8/31-9/4 東京自由行</title>
 
-  <!-- 2. 偽裝成 App 的 iOS / Android 專用設定 -->
   <link rel="manifest" href="manifest.json">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
@@ -20,35 +17,35 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-      /* 抹去網頁感：禁止點擊高亮、禁止文字複製選取 */
       -webkit-tap-highlight-color: transparent;
       -webkit-user-select: none;
       user-select: none;
     }
 
     body {
-      background-color: #f1f5f9;
+      background-color: #e0f2fe; /* 淡藍海洋背景 */
       display: flex;
       justify-content: center;
       min-height: 100vh;
-      overscroll-behavior-y: none; /* 防止滑到底部時的網頁拉伸彈跳 */
+      overscroll-behavior-y: none;
     }
 
     .app-container {
       width: 100%;
       max-width: 480px;
-      background-color: #f8fafc;
+      background-color: #f0fdf4;
+      background: linear-gradient(180deg, #f0f7ff 0%, #f8fafc 100%);
       display: flex;
       flex-direction: column;
       position: relative;
       padding-bottom: 75px;
-      box-shadow: 0 0 20px rgba(0,0,0,0.05);
+      box-shadow: 0 0 25px rgba(11, 29, 58, 0.15);
       min-height: 100vh;
     }
 
-    /* 頂部 Header (包含 iPhone 安全區域 safe-area) */
+    /* 頂部 Header - Jubilee Blue (迪士尼海洋25週年歡騰藍) */
     .header {
-      background-color: #121c2b;
+      background: linear-gradient(135deg, #0b1d3a 0%, #102a54 60%, #1e3a8a 100%);
       color: #ffffff;
       padding: calc(20px + env(safe-area-inset-top)) 20px 20px 20px;
       text-align: center;
@@ -57,12 +54,16 @@
       position: sticky;
       top: 0;
       z-index: 10;
+      box-shadow: 0 4px 15px rgba(11, 29, 58, 0.3);
+      border-bottom: 2px solid #d4af37; /* 璀璨金色邊框點綴 */
     }
 
     .header h1 {
       font-size: 20px;
       font-weight: 700;
       letter-spacing: 0.5px;
+      color: #ffffff;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
     }
 
     /* 天數橫向導覽列 */
@@ -82,9 +83,9 @@
       flex: 0 0 auto;
       padding: 8px 16px;
       border-radius: 20px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
       background-color: #ffffff;
-      color: #64748b;
+      color: #475569;
       font-size: 14px;
       font-weight: 600;
       cursor: pointer;
@@ -92,10 +93,19 @@
     }
 
     .day-btn.active {
-      background-color: #1a293e;
+      background: linear-gradient(135deg, #0b1d3a 0%, #1e3a8a 100%);
       color: #ffffff;
-      border-color: #1a293e;
-      box-shadow: 0 4px 10px rgba(26, 41, 62, 0.2);
+      border-color: #d4af37;
+      box-shadow: 0 4px 10px rgba(11, 29, 58, 0.25);
+    }
+
+    /* 頁面切換容器 */
+    .page-view {
+      display: none;
+    }
+
+    .page-view.active {
+      display: block;
     }
 
     /* 時間軸區域 */
@@ -111,7 +121,7 @@
       top: 24px;
       bottom: 24px;
       width: 2px;
-      background-color: #cbd5e1;
+      background-color: #93c5fd;
       z-index: 1;
     }
 
@@ -125,8 +135,8 @@
     .time-badge {
       width: 52px;
       padding: 4px 6px;
-      background-color: #e2e8f0;
-      color: #334155;
+      background-color: #e0f2fe;
+      color: #1e40af;
       font-size: 12px;
       font-weight: 700;
       border-radius: 6px;
@@ -139,7 +149,7 @@
       width: 12px;
       height: 12px;
       border-radius: 50%;
-      border: 3px solid #1a293e;
+      border: 3px solid #1e3a8a;
       background-color: #ffffff;
       margin: 9px 12px 0 12px;
       z-index: 2;
@@ -152,7 +162,8 @@
       background-color: #ffffff;
       border-radius: 16px;
       padding: 14px 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.04);
+      border: 1px solid #f1f5f9;
     }
 
     .card-header {
@@ -173,21 +184,22 @@
       align-items: center;
       gap: 4px;
       padding: 4px 10px;
-      background-color: #f1f5f9;
-      color: #334155;
+      background-color: #eff6ff;
+      color: #1d4ed8;
       font-size: 12px;
       font-weight: 600;
       border-radius: 16px;
       text-decoration: none;
       flex-shrink: 0;
+      border: 1px solid #bfdbfe;
     }
 
     .card-desc {
       font-size: 13px;
-      color: #64748b;
+      color: #475569;
       line-height: 1.5;
       white-space: pre-line;
-      -webkit-user-select: text; /* 允許長按複製備註內容 */
+      -webkit-user-select: text;
       user-select: text;
     }
 
@@ -200,7 +212,22 @@
       word-break: break-all;
     }
 
-    /* 底部 Tab 列 (適應 iPhone 底部橫條) */
+    /* 記帳頁面佔位樣式 */
+    .accounting-container {
+      padding: 24px 20px;
+      text-align: center;
+      color: #64748b;
+    }
+
+    .accounting-card {
+      background: #ffffff;
+      border-radius: 16px;
+      padding: 20px;
+      margin-top: 10px;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+    }
+
+    /* 底部 Tab 列 (只留 行程 與 記帳) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -209,7 +236,7 @@
       height: calc(60px + env(safe-area-inset-bottom));
       padding-bottom: env(safe-area-inset-bottom);
       background-color: #ffffff;
-      border-top: 1px solid #f1f5f9;
+      border-top: 1px solid #e2e8f0;
       display: flex;
       justify-content: space-around;
       align-items: center;
@@ -217,47 +244,60 @@
     }
 
     .bottom-tab {
+      flex: 1;
       display: flex;
       flex-direction: column;
       align-items: center;
       gap: 3px;
       color: #94a3b8;
-      font-size: 11px;
+      font-size: 12px;
       border: none;
       background: none;
       cursor: pointer;
+      padding: 6px 0;
     }
 
     .bottom-tab.active {
-      color: #2563eb;
+      color: #1e3a8a;
       font-weight: bold;
     }
 
     .tab-icon {
-      font-size: 18px;
+      font-size: 20px;
     }
   </style>
 </head>
 <body>
 
   <div class="app-container">
+    <!-- 頂部標題 -->
     <header class="header">
-      <h1>🇯🇵 東京自由行 (8/31 ~ 9/4)</h1>
+      <h1>8/31-9/4 東京自由行</h1>
     </header>
 
-    <div class="days-nav" id="daysNav"></div>
-    <div class="timeline-container" id="timelineList"></div>
+    <!-- 1. 行程頁面 View -->
+    <div id="pageItinerary" class="page-view active">
+      <div class="days-nav" id="daysNav"></div>
+      <div class="timeline-container" id="timelineList"></div>
+    </div>
 
+    <!-- 2. 記帳頁面 View -->
+    <div id="pageAccounting" class="page-view">
+      <div class="accounting-container">
+        <h3>💰 旅費記帳區域</h3>
+        <div class="accounting-card">
+          <p>（這裡之後可以新增公費、個人消費明細與匯率計算功能）</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部導覽列（只留 行程 和 記帳） -->
     <nav class="bottom-nav">
-      <button class="bottom-tab">
-        <span class="tab-icon">🔍</span>
-        <span>探索</span>
-      </button>
-      <button class="bottom-tab active">
+      <button class="bottom-tab active" onclick="switchTab('itinerary')">
         <span class="tab-icon">🗺️</span>
         <span>行程</span>
       </button>
-      <button class="bottom-tab">
+      <button class="bottom-tab" onclick="switchTab('accounting')">
         <span class="tab-icon">💰</span>
         <span>記帳</span>
       </button>
@@ -428,6 +468,25 @@
       currentDayIndex = index;
       renderDayButtons();
       renderTimeline();
+    }
+
+    // 底部 Tab 切換邏輯
+    function switchTab(tabName) {
+      const pageItinerary = document.getElementById("pageItinerary");
+      const pageAccounting = document.getElementById("pageAccounting");
+      const tabs = document.querySelectorAll(".bottom-tab");
+
+      tabs.forEach(tab => tab.classList.remove("active"));
+
+      if (tabName === 'itinerary') {
+        pageItinerary.classList.add("active");
+        pageAccounting.classList.remove("active");
+        tabs[0].classList.add("active");
+      } else {
+        pageAccounting.classList.add("active");
+        pageItinerary.classList.remove("active");
+        tabs[1].classList.add("active");
+      }
     }
 
     renderDayButtons();
