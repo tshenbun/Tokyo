@@ -1,0 +1,15 @@
+{
+  "name": "東京自由行",
+  "short_name": "東京行程",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#121c2b",
+  "theme_color": "#121c2b",
+  "icons": [
+    {
+      "src": "icon.jpg",
+      "sizes": "512x512",
+      "type": "image/jpeg"
+    }
+  ]
+}
