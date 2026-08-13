@@ -23,7 +23,7 @@
     }
 
     body {
-      background-color: #e0f2fe; /* 淡藍海洋背景 */
+      background-color: #e0f2fe;
       display: flex;
       justify-content: center;
       min-height: 100vh;
@@ -33,7 +33,6 @@
     .app-container {
       width: 100%;
       max-width: 480px;
-      background-color: #f0fdf4;
       background: linear-gradient(180deg, #f0f7ff 0%, #f8fafc 100%);
       display: flex;
       flex-direction: column;
@@ -43,7 +42,7 @@
       min-height: 100vh;
     }
 
-    /* 頂部 Header - Jubilee Blue (迪士尼海洋25週年歡騰藍) */
+    /* 頂部 Header - Jubilee Blue */
     .header {
       background: linear-gradient(135deg, #0b1d3a 0%, #102a54 60%, #1e3a8a 100%);
       color: #ffffff;
@@ -55,7 +54,7 @@
       top: 0;
       z-index: 10;
       box-shadow: 0 4px 15px rgba(11, 29, 58, 0.3);
-      border-bottom: 2px solid #d4af37; /* 璀璨金色邊框點綴 */
+      border-bottom: 2px solid #d4af37;
     }
 
     .header h1 {
@@ -99,7 +98,6 @@
       box-shadow: 0 4px 10px rgba(11, 29, 58, 0.25);
     }
 
-    /* 頁面切換容器 */
     .page-view {
       display: none;
     }
@@ -212,7 +210,28 @@
       word-break: break-all;
     }
 
-    /* 記帳頁面佔位樣式 */
+    /* 圖片展示樣式 */
+    .card-img-container {
+      margin-top: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #e2e8f0;
+      background-color: #f8fafc;
+    }
+
+    .card-img {
+      width: 100%;
+      display: block;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .card-img:active {
+      transform: scale(0.98);
+    }
+
+    /* 記帳頁面樣式 */
     .accounting-container {
       padding: 24px 20px;
       text-align: center;
@@ -227,7 +246,7 @@
       box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
     }
 
-    /* 底部 Tab 列 (只留 行程 與 記帳) */
+    /* 底部 Tab 列 */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -270,18 +289,17 @@
 <body>
 
   <div class="app-container">
-    <!-- 頂部標題 -->
     <header class="header">
       <h1>8/31-9/4 東京自由行</h1>
     </header>
 
-    <!-- 1. 行程頁面 View -->
+    <!-- 1. 行程頁面 -->
     <div id="pageItinerary" class="page-view active">
       <div class="days-nav" id="daysNav"></div>
       <div class="timeline-container" id="timelineList"></div>
     </div>
 
-    <!-- 2. 記帳頁面 View -->
+    <!-- 2. 記帳頁面 -->
     <div id="pageAccounting" class="page-view">
       <div class="accounting-container">
         <h3>💰 旅費記帳區域</h3>
@@ -291,7 +309,6 @@
       </div>
     </div>
 
-    <!-- 底部導覽列（只留 行程 和 記帳） -->
     <nav class="bottom-nav">
       <button class="bottom-tab active" onclick="switchTab('itinerary')">
         <span class="tab-icon">🗺️</span>
@@ -311,10 +328,11 @@
         events: [
           { time: "12:35", title: "抵達成田機場", desc: "班機抵達，準備入境與搭車。" },
           { 
-            time: "14:10", 
+            time: "14:35", 
             title: "搭車前往迪士尼大使大飯店", 
-            desc: "可選班次：\n• 14:10 ➔ 15:08\n• 14:40 ➔ 15:38\n• 15:00 ➔ 15:58\n• 15:45 ➔ 16:43",
-            location: "迪士尼大使大飯店"
+            desc: "已購買 14:35 成田機場第2航廈 17號月台發車之班次（15:38 抵達）。\n\n可選備用班次：\n• 14:10 ➔ 15:08\n• 14:40 ➔ 15:38\n• 15:00 ➔ 15:58\n• 15:45 ➔ 16:43",
+            location: "迪士尼大使大飯店",
+            image: "ticket-day1.png" /* 引入車票圖片 */
           },
           { 
             time: "16:00", 
@@ -458,6 +476,13 @@
               </div>
               <p class="card-desc">${event.desc}</p>
               ${event.link ? `<a href="${event.link}" target="_blank" class="card-link">🔗 開啟網頁/預約連結</a>` : ''}
+              ${event.image ? `
+                <div class="card-img-container">
+                  <a href="${event.image}" target="_blank">
+                    <img src="${event.image}" alt="車票/圖片" class="card-img">
+                  </a>
+                </div>
+              ` : ''}
             </div>
           </div>
         `;
@@ -470,7 +495,6 @@
       renderTimeline();
     }
 
-    // 底部 Tab 切換邏輯
     function switchTab(tabName) {
       const pageItinerary = document.getElementById("pageItinerary");
       const pageAccounting = document.getElementById("pageAccounting");
