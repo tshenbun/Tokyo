@@ -54,7 +54,7 @@
       top: 0;
       z-index: 10;
       box-shadow: 0 4px 15px rgba(0, 91, 102, 0.35);
-      border-bottom: 2px solid #a5f3fc; /* 璀璨銀藍光澤邊框 */
+      border-bottom: 2px solid #a5f3fc;
     }
 
     .header h1 {
@@ -351,35 +351,48 @@
           { time: "08:45", title: "東京迪士尼海洋", desc: "表定 08:45 入園，全天暢玩迪士尼海洋！", location: "東京迪士尼海洋" },
           { 
             time: "21:00", 
-            title: "取行李 ➔ 前往東京車站飯店", 
-            desc: "領取行李後，經過購物廣場步行至舞濱站。\n搭乘【JR京葉線】往東京車站（約 17 分鐘 / 6 站 / ¥260，幾乎每 6 分鐘一班車）。",
-            location: "舞濱車站"
+            title: "取行李 ➔ 前往雷姆東京京橋飯店", 
+            desc: "領取行李後，經過購物廣場步行至舞濱站。\n搭乘【JR京葉線】往東京車站/京橋（約 17 分鐘 / 6 站 / ¥260，幾乎每 6 分鐘一班車）。",
+            location: "雷姆東京京橋飯店"
           },
-          { time: "22:30", title: "東京車站飯店 Check-in", desc: "抵達飯店辦理入住手續並休息。" }
+          { time: "22:30", title: "雷姆東京京橋飯店 Check-in", desc: "抵達飯店辦理入住手續並休息。", location: "雷姆東京京橋飯店" }
         ]
       },
       {
         dayLabel: "Day 3 (9/2)",
         events: [
           { 
-            time: "上午", 
+            time: "08:30", 
             title: "搭乘高速巴士前往御殿場", 
-            desc: "票價：¥1,800 / 人（記得將車票印出來）\n提前預約車票（1 個月前開放）：",
-            link: "https://www.kousokubus.net/JpnBus/zhtw#105_130039_220004_0_"
+            desc: "出發地點：東京站八重洲南口（08:30 發車 ➔ 10:15 抵達）\n座位：1號車 [6A] [6B]\n總票價：¥3,600 (2人)",
+            location: "東京站 八重洲南口",
+            image: "ticket-day3-go.png"
           },
           { 
-            time: "11:00", 
+            time: "10:15", 
             title: "御殿場 Premium Outlets 購物", 
             desc: "逛 Outlet 買好買滿！\n線上地圖與品牌分類指南：",
             link: "https://platinumaps.jp/d/premiumoutlets-gotemba?culture=en&floor=1F",
             location: "御殿場 Premium Outlets"
           },
-          { time: "16:30", title: "搭乘回程巴士", desc: "預計搭乘 16:30 班次，約 18:10 抵達東京車站（票價：¥2,000）。" },
+          { 
+            time: "16:30", 
+            title: "搭乘回程巴士返回東京站", 
+            desc: "出發地點：御殿場 Premium Outlets（16:30 發車 ➔ 18:10 抵達東京站日本橋口）\n座位：1號車 [3C] [3D]\n總票價：¥4,000 (2人)",
+            location: "御殿場 Premium Outlets",
+            image: "ticket-day3-back.png"
+          },
           { 
             time: "18:30", 
             title: "晚餐 & 東京車站周遭", 
             desc: "晚餐推薦：鳥貴族 串燒\n飯後可逛逛東京車站周邊夜景與商場。",
             location: "鳥貴族 東京車站"
+          },
+          { 
+            time: "22:00", 
+            title: "返回雷姆東京京橋飯店", 
+            desc: "返回飯店休息。",
+            location: "雷姆東京京橋飯店"
           }
         ]
       },
@@ -389,7 +402,7 @@
           { 
             time: "08:44", 
             title: "從京橋搭車至澀谷", 
-            desc: "搭乘【銀座線】往澀谷方向（約 19 分鐘 / 9 站 / ¥209）。\n09:03 抵達澀谷站。" 
+            desc: "從【京橋站】搭乘【銀座線】往澀谷方向（約 19 分鐘 / 9 站 / ¥209）。\n09:03 抵達澀谷站。" 
           },
           { 
             time: "09:15", 
@@ -424,6 +437,12 @@
             time: "18:30", 
             title: "晚餐（澀谷/東京）", 
             desc: "推薦：牛舌定食，晚上行程彈性規劃（抓預算約 ¥400）。" 
+          },
+          { 
+            time: "22:00", 
+            title: "返回雷姆東京京橋飯店", 
+            desc: "返回飯店休息。",
+            location: "雷姆東京京橋飯店"
           }
         ]
       },
@@ -432,8 +451,9 @@
         events: [
           { 
             time: "11:00", 
-            title: "前往羽田機場", 
-            desc: "車資約 ¥550 / 人。" 
+            title: "退房 ➔ 前往羽田機場", 
+            desc: "從雷姆東京京橋飯店退房前往羽田機場（車資約 ¥550 / 人）。",
+            location: "雷姆東京京橋飯店"
           },
           { 
             time: "11:30", 
