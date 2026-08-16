@@ -20,7 +20,7 @@
       box-sizing: border-box;
       margin: 0;
       padding: 0;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Segoe UI", Roboto, sans-serif;
       -webkit-tap-highlight-color: transparent;
       -webkit-user-select: none;
       user-select: none;
@@ -463,7 +463,7 @@
       font-weight: bold;
     }
 
-    /* ==================== 清單共通樣式 (行李 & 購物) ==================== */
+    /* ==================== 清單共通樣式 ==================== */
     .checklist-container {
       padding: 16px 20px;
     }
@@ -474,6 +474,7 @@
       padding: 20px 18px;
       box-shadow: 0 4px 15px rgba(0, 109, 119, 0.06);
       border: 1px solid #e6f4f1;
+      margin-bottom: 16px;
     }
 
     .checklist-header {
@@ -567,7 +568,7 @@
       color: #ef4444;
     }
 
-    /* ==================== 購物清單專屬樣式 ==================== */
+    /* 購物清單樣式 */
     .shopping-item-img {
       width: 46px;
       height: 46px;
@@ -587,11 +588,6 @@
       border-radius: 10px;
       white-space: nowrap;
       margin-right: 4px;
-    }
-
-    .check-item.done .shopping-price-tag {
-      background: #e2e8f0;
-      color: #94a3b8;
     }
 
     .shopping-form-box {
@@ -615,6 +611,8 @@
       font-size: 13px;
       outline: none;
       background-color: #f8fafc;
+      -webkit-user-select: text;
+      user-select: text;
     }
 
     .shop-input:focus {
@@ -637,7 +635,147 @@
       cursor: pointer;
     }
 
-    /* 圖片預覽彈窗 Modal */
+    /* ==================== 4. iOS 備忘錄專屬風格 ==================== */
+    .ios-notes-filter {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      margin-bottom: 14px;
+      padding-bottom: 4px;
+    }
+
+    .ios-notes-filter::-webkit-scrollbar {
+      display: none;
+    }
+
+    .ios-filter-chip {
+      flex: 0 0 auto;
+      padding: 5px 12px;
+      border-radius: 16px;
+      background-color: #f1f5f9;
+      color: #64748b;
+      font-size: 12px;
+      font-weight: 700;
+      border: 1px solid transparent;
+      cursor: pointer;
+    }
+
+    .ios-filter-chip.active {
+      background-color: #fef3c7;
+      color: #b45309;
+      border-color: #fde68a;
+    }
+
+    /* iOS 經典黃金圓形勾選圈 */
+    .ios-checkbox {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      border: 2px solid #d97706;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      background-color: #ffffff;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .ios-todo-item.done .ios-checkbox {
+      background-color: #d97706;
+      border-color: #d97706;
+    }
+
+    .ios-todo-item.done .ios-checkbox::after {
+      content: '✓';
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 900;
+    }
+
+    .ios-todo-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 12px;
+      background: #ffffff;
+      border-radius: 14px;
+      border: 1px solid #fef3c7;
+      box-shadow: 0 2px 6px rgba(217, 119, 6, 0.05);
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .ios-todo-item:hover {
+      background-color: #fffdf7;
+    }
+
+    .ios-todo-item.done {
+      background-color: #f8fafc;
+      opacity: 0.6;
+      border-color: #f1f5f9;
+    }
+
+    .ios-todo-item.done .ios-todo-text {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .ios-todo-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #1e293b;
+      flex: 1;
+      line-height: 1.4;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    .ios-day-tag {
+      font-size: 11px;
+      font-weight: 700;
+      color: #b45309;
+      background: #fef3c7;
+      padding: 2px 7px;
+      border-radius: 8px;
+    }
+
+    /* iOS 隨手記事本區域 */
+    .ios-paper-card {
+      background: #fffdf5;
+      border: 1px solid #fde68a;
+      border-radius: 20px;
+      padding: 16px;
+      box-shadow: 0 4px 15px rgba(217, 119, 6, 0.06);
+    }
+
+    .ios-paper-header {
+      font-size: 15px;
+      font-weight: 800;
+      color: #92400e;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ios-notepad {
+      width: 100%;
+      height: 140px;
+      background: transparent;
+      border: none;
+      outline: none;
+      resize: none;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #334155;
+      font-family: inherit;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    /* 圖片放大預覽 Modal */
     .img-modal-overlay {
       display: none;
       position: fixed;
@@ -660,7 +798,7 @@
       box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* 底部 Tab 列 (3 Tabs) */
+    /* 底部 Tab 列 (4 Tabs) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -745,7 +883,7 @@
       </div>
     </div>
 
-    <!-- 3. 購物清單頁面 (全新加入) -->
+    <!-- 3. 購物清單頁面 -->
     <div id="pageShopping" class="page-view">
       <div class="checklist-container">
         <div class="checklist-card">
@@ -756,7 +894,6 @@
 
           <div class="checklist-items" id="shoppingItemsList"></div>
 
-          <!-- 新增購物物品表單 -->
           <div class="shopping-form-box">
             <div class="form-input-row">
               <input type="text" id="shopItemName" class="shop-input" style="flex: 2;" placeholder="物品名稱 (如: 迪士尼髮箍)">
@@ -776,7 +913,51 @@
       </div>
     </div>
 
-    <!-- 底部 Tab 列 -->
+    <!-- 4. iOS 備忘錄 & 每日待辦頁面 (全新加入) -->
+    <div id="pageNotes" class="page-view">
+      <div class="checklist-container">
+        
+        <!-- 當日待辦事項卡片 -->
+        <div class="checklist-card" style="border: 1px solid #fef3c7; box-shadow: 0 4px 15px rgba(217, 119, 6, 0.08);">
+          <div class="checklist-header" style="border-bottom: 2px dashed #fde68a;">
+            <div class="checklist-title" style="color: #92400e;">
+              <span>📝 當日待辦事項確認</span>
+            </div>
+            <button class="reset-btn" style="border-color: #fde68a; color: #b45309;" onclick="resetNotesTodos()">一鍵重置</button>
+          </div>
+
+          <!-- 天數快速篩選 -->
+          <div class="ios-notes-filter" id="notesFilterNav"></div>
+
+          <div class="checklist-items" id="notesTodosList"></div>
+
+          <!-- 新增待辦輸入欄 -->
+          <div class="form-input-row" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #fef3c7;">
+            <select id="newTodoDaySelect" class="shop-input" style="width: 100px; font-weight: 700; color: #b45309; background-color: #fffdf5;">
+              <option value="全部">一般</option>
+              <option value="Day 1">Day 1</option>
+              <option value="Day 2">Day 2</option>
+              <option value="Day 3">Day 3</option>
+              <option value="Day 4">Day 4</option>
+              <option value="Day 5">Day 5</option>
+            </select>
+            <input type="text" id="newTodoInput" class="shop-input" style="flex: 1;" placeholder="新增待辦 (如: 記得拿海洋優先券)..." onkeypress="handleNotesKeyPress(event)">
+            <button class="day-btn active" style="padding: 8px 16px; border-radius: 12px; background: linear-gradient(135deg, #d97706 0%, #b45309 100%); border: none;" onclick="addNewNotesTodo()">＋</button>
+          </div>
+        </div>
+
+        <!-- iOS 隨手筆記本卡片 (即打即存) -->
+        <div class="ios-paper-card">
+          <div class="ios-paper-header">
+            <span>📌 自由速記筆記本 (即時自動儲存)</span>
+          </div>
+          <textarea id="freeNotesPad" class="ios-notepad" placeholder="在此輸入隨手筆記 (例如: 置物櫃號碼、門禁密碼、店家推薦等)..." oninput="saveFreeNotes()"></textarea>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- 底部 Tab 列 (4 Tabs) -->
     <nav class="bottom-nav">
       <button class="bottom-tab active" onclick="switchTab('itinerary')">
         <span class="tab-icon">🗺️</span>
@@ -789,6 +970,10 @@
       <button class="bottom-tab" onclick="switchTab('shopping')">
         <span class="tab-icon">🛍️</span>
         <span>購物清單</span>
+      </button>
+      <button class="bottom-tab" onclick="switchTab('notes')">
+        <span class="tab-icon">📝</span>
+        <span>備忘錄</span>
       </button>
     </nav>
   </div>
@@ -1218,7 +1403,6 @@
         attributionControl: false
       }).setView([35.69, 140.10], 9);
 
-      // 使用 CartoDB Voyager 柔和繪本粉嫩風底圖
       L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 18,
         subdomains: 'abcd'
@@ -1245,7 +1429,6 @@
       document.getElementById("mapDayTitle").innerText = dayData.mapInfo.title;
       document.getElementById("mapSubtitle").innerText = dayData.mapInfo.subtitle;
 
-      // 繪製可愛小標籤 Marker (點擊開啟 Google Maps)
       if (dayData.mapInfo.markers) {
         dayData.mapInfo.markers.forEach(m => {
           const mapUrl = m.mapUrl || `https://www.google.com/maps/search/?api=1&query=${m.lat},${m.lng}`;
@@ -1260,7 +1443,6 @@
         });
       }
 
-      // 繪製路線
       if (dayData.mapInfo.routes) {
         dayData.mapInfo.routes.forEach(routeCoords => {
           L.polyline(routeCoords, {
@@ -1434,7 +1616,7 @@
       localStorage.setItem('tokyo_luggage_checklist', JSON.stringify(checklist));
     }
 
-    /* ==================== 3. 購物清單邏輯 (支援圖片與價格) ==================== */
+    /* ==================== 3. 購物清單邏輯 ==================== */
     const defaultShoppingList = [
       { name: "迪士尼 25週年限定髮箍", price: "¥2,400", img: "", checked: false },
       { name: "達菲/雪莉玫 吊飾娃娃", price: "¥2,600", img: "", checked: false },
@@ -1455,13 +1637,9 @@
       container.innerHTML = shoppingList.map((item, index) => `
         <div class="check-item ${item.checked ? 'done' : ''}" onclick="toggleShoppingCheck(${index}, event)">
           <input type="checkbox" ${item.checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleShoppingCheck(${index});">
-          
           ${item.img ? `<img src="${item.img}" class="shopping-item-img" onclick="openImgModal('${item.img}', event)" title="點擊放大圖片">` : ''}
-          
           <span class="check-text">${item.name}</span>
-          
           ${item.price ? `<span class="shopping-price-tag">${item.price}</span>` : ''}
-          
           <button class="item-delete-btn" title="刪除此項" onclick="deleteShoppingItem(${index}, event)">✕</button>
         </div>
       `).join('');
@@ -1507,7 +1685,6 @@
       saveShoppingList();
       renderShoppingList();
 
-      // 清空輸入欄位
       nameInput.value = "";
       priceInput.value = "";
       tempUploadedImgBase64 = "";
@@ -1534,7 +1711,6 @@
       localStorage.setItem('tokyo_shopping_list', JSON.stringify(shoppingList));
     }
 
-    /* 圖片放大預覽 */
     function openImgModal(imgSrc, event) {
       if (event) event.stopPropagation();
       document.getElementById("modalPreviewImg").src = imgSrc;
@@ -1545,17 +1721,136 @@
       document.getElementById("imgModal").classList.remove("active");
     }
 
-    /* ==================== 4. 頁面分頁切換 (3 Tabs) ==================== */
+    /* ==================== 4. iOS 備忘錄 & 待辦事項邏輯 ==================== */
+    const defaultNotesTodos = [
+      { text: "Day 1 飯店 Check-in 領取海洋優先入園券", day: "Day 1", checked: false },
+      { text: "Day 1 詢問飯店隔天退房行李寄放服務", day: "Day 1", checked: false },
+      { text: "Day 2 入園先搶冰雪奇緣 DPA + 堅信夢想之海 DPA", day: "Day 2", checked: false },
+      { text: "Day 2 提早預約午餐 Yucatan Base Camp Grill", day: "Day 2", checked: false },
+      { text: "Day 3 御殿場高速巴士車票預先印出/確認", day: "Day 3", checked: false },
+      { text: "Day 4 澀谷美登利壽司 11:00 抽號碼牌", day: "Day 4", checked: false },
+      { text: "Day 4 KKday 搶 SHIBUYA SKY 19:20 門票", day: "Day 4", checked: false },
+      { text: "Day 5 退房檢查房間貴重物品與充電器", day: "Day 5", checked: false }
+    ];
+
+    let notesTodos = JSON.parse(localStorage.getItem('tokyo_notes_todos')) || defaultNotesTodos;
+    let selectedNoteDayFilter = "全部";
+
+    const noteFilterDays = ["全部", "Day 1", "Day 2", "Day 3", "Day 4", "Day 5"];
+
+    function renderNotesFilter() {
+      const nav = document.getElementById("notesFilterNav");
+      nav.innerHTML = noteFilterDays.map(d => `
+        <button class="ios-filter-chip ${d === selectedNoteDayFilter ? 'active' : ''}" onclick="switchNoteFilter('${d}')">
+          ${d}
+        </button>
+      `).join('');
+    }
+
+    function switchNoteFilter(day) {
+      selectedNoteDayFilter = day;
+      renderNotesFilter();
+      renderNotesTodos();
+    }
+
+    function renderNotesTodos() {
+      const container = document.getElementById("notesTodosList");
+      let filtered = notesTodos;
+      if (selectedNoteDayFilter !== "全部") {
+        filtered = notesTodos.filter(t => t.day === selectedNoteDayFilter);
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#b45309; opacity:0.6; padding:16px; font-size:13px;">目前無此分類待辦事項</div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map((item, originalIndex) => {
+        const realIndex = notesTodos.indexOf(item);
+        return `
+          <div class="ios-todo-item ${item.checked ? 'done' : ''}" onclick="toggleNoteTodo(${realIndex}, event)">
+            <div class="ios-checkbox"></div>
+            <span class="ios-todo-text">${item.text}</span>
+            <span class="ios-day-tag">${item.day}</span>
+            <button class="item-delete-btn" title="刪除此項" onclick="deleteNoteTodo(${realIndex}, event)">✕</button>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function toggleNoteTodo(index, event) {
+      if (event && event.target.tagName === 'BUTTON') return;
+      notesTodos[index].checked = !notesTodos[index].checked;
+      saveNotesTodos();
+      renderNotesTodos();
+    }
+
+    function addNewNotesTodo() {
+      const input = document.getElementById("newTodoInput");
+      const daySelect = document.getElementById("newTodoDaySelect");
+      const text = input.value.trim();
+      const day = daySelect.value;
+
+      if (!text) {
+        alert("請輸入待辦事項內容！");
+        return;
+      }
+
+      notesTodos.push({ text: text, day: day, checked: false });
+      saveNotesTodos();
+      renderNotesTodos();
+      input.value = "";
+    }
+
+    function handleNotesKeyPress(event) {
+      if (event.key === 'Enter') addNewNotesTodo();
+    }
+
+    function deleteNoteTodo(index, event) {
+      event.stopPropagation();
+      notesTodos.splice(index, 1);
+      saveNotesTodos();
+      renderNotesTodos();
+    }
+
+    function resetNotesTodos() {
+      if (confirm("確定要重置所有備忘錄待辦的勾選狀態嗎？")) {
+        notesTodos.forEach(item => item.checked = false);
+        saveNotesTodos();
+        renderNotesTodos();
+      }
+    }
+
+    function saveNotesTodos() {
+      localStorage.setItem('tokyo_notes_todos', JSON.stringify(notesTodos));
+    }
+
+    /* 隨手筆記本自動儲存 */
+    function loadFreeNotes() {
+      const savedNotes = localStorage.getItem('tokyo_free_notes');
+      if (savedNotes !== null) {
+        document.getElementById("freeNotesPad").value = savedNotes;
+      }
+    }
+
+    function saveFreeNotes() {
+      const text = document.getElementById("freeNotesPad").value;
+      localStorage.setItem('tokyo_free_notes', text);
+    }
+
+    /* ==================== 5. 頁面分頁切換 (4 Tabs) ==================== */
     function switchTab(tabName) {
       const pageItinerary = document.getElementById("pageItinerary");
       const pageChecklist = document.getElementById("pageChecklist");
       const pageShopping = document.getElementById("pageShopping");
+      const pageNotes = document.getElementById("pageNotes");
       const tabs = document.querySelectorAll(".bottom-tab");
 
       tabs.forEach(tab => tab.classList.remove("active"));
       pageItinerary.classList.remove("active");
       pageChecklist.classList.remove("active");
       pageShopping.classList.remove("active");
+      pageNotes.classList.remove("active");
 
       if (tabName === 'itinerary') {
         pageItinerary.classList.add("active");
@@ -1567,6 +1862,9 @@
       } else if (tabName === 'shopping') {
         pageShopping.classList.add("active");
         tabs[2].classList.add("active");
+      } else if (tabName === 'notes') {
+        pageNotes.classList.add("active");
+        tabs[3].classList.add("active");
       }
     }
 
@@ -1576,6 +1874,9 @@
     initMap();
     renderChecklist();
     renderShoppingList();
+    renderNotesFilter();
+    renderNotesTodos();
+    loadFreeNotes();
   </script>
 </body>
 </html>
