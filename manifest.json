@@ -1,15 +1,1581 @@
-{
-  "name": "東京自由行",
-  "short_name": "東京行程",
-  "start_url": "./index.html",
-  "display": "standalone",
-  "background_color": "#121c2b",
-  "theme_color": "#121c2b",
-  "icons": [
-    {
-      "src": "icon.png",
-      "sizes": "512x512",
-      "type": "image/png"
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>8/31-9/4 東京自由行</title>
+
+  <link rel="manifest" href="manifest.json">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="東京行程">
+  <link rel="apple-touch-icon" href="icon.png">
+
+  <!-- Leaflet 地圖樣式與腳本 -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none;
+      user-select: none;
     }
-  ]
-}
+
+    body {
+      background-color: #dbeafe;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+      overscroll-behavior-y: none;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      background: linear-gradient(180deg, #e8f8f8 0%, #f4fbfb 50%, #f8fafc 100%);
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      padding-bottom: 75px;
+      box-shadow: 0 0 25px rgba(0, 128, 138, 0.2);
+      min-height: 100vh;
+    }
+
+    /* 頂部 Header - 融合迪士尼 25 週年 Sparkling Jubilee 海報背景 */
+    .header {
+      background-image: 
+        linear-gradient(180deg, rgba(0, 91, 102, 0.25) 0%, rgba(0, 60, 70, 0.75) 100%),
+        url('header-bg.jpg');
+      background-size: cover;
+      background-position: center 25%;
+      background-repeat: no-repeat;
+      color: #ffffff;
+      padding: calc(24px + env(safe-area-inset-top)) 20px 24px 20px;
+      text-align: center;
+      border-bottom-left-radius: 26px;
+      border-bottom-right-radius: 26px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 6px 18px rgba(0, 91, 102, 0.35);
+      border-bottom: 2.5px solid #a5f3fc;
+      min-height: 120px;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+    }
+
+    /* 玻璃擬態標題膠囊 */
+    .header-title-box {
+      background: rgba(0, 45, 55, 0.55);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      padding: 6px 18px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.4);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+    }
+
+    .header h1 {
+      font-size: 19px;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      color: #ffffff;
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.6);
+    }
+
+    /* 頁面切換 View */
+    .page-view {
+      display: none;
+    }
+
+    .page-view.active {
+      display: block;
+    }
+
+    /* 天數橫向導覽列 */
+    .days-nav {
+      display: flex;
+      gap: 10px;
+      padding: 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .days-nav::-webkit-scrollbar {
+      display: none;
+    }
+
+    .day-btn {
+      flex: 0 0 auto;
+      padding: 8px 16px;
+      border-radius: 20px;
+      border: 1px solid #b2f5ea;
+      background-color: #ffffff;
+      color: #475569;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .day-btn.active {
+      background: linear-gradient(135deg, #006d77 0%, #009688 100%);
+      color: #ffffff;
+      border-color: #80e9dd;
+      box-shadow: 0 4px 12px rgba(0, 109, 119, 0.3);
+    }
+
+    /* ==================== 可愛路線地圖樣式 ==================== */
+    .map-wrapper {
+      margin: 0 16px 16px 16px;
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 10px;
+      box-shadow: 0 4px 14px rgba(0, 128, 138, 0.1);
+      border: 1.5px solid #ccfbf1;
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
+    .map-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .map-badge {
+      font-size: 11px;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    #routeMap {
+      width: 100%;
+      height: 210px;
+      border-radius: 16px;
+      z-index: 1;
+    }
+
+    .custom-map-tag {
+      background: #ffffff;
+      border: 1.5px solid #00808a;
+      border-radius: 20px;
+      padding: 4px 9px;
+      font-size: 11px;
+      font-weight: 800;
+      color: #005b66;
+      box-shadow: 0 3px 8px rgba(0, 91, 102, 0.25);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      text-decoration: none;
+      cursor: pointer;
+      transform: translate(-50%, -50%);
+      transition: transform 0.15s ease;
+    }
+
+    .custom-map-tag:active {
+      transform: translate(-50%, -45%) scale(0.95);
+      background-color: #f0fdfa;
+    }
+
+    .custom-map-tag::after {
+      content: '';
+      position: absolute;
+      bottom: -5px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-width: 5px 4px 0 4px;
+      border-style: solid;
+      border-color: #00808a transparent transparent transparent;
+    }
+
+    /* 時間軸區域 */
+    .timeline-container {
+      padding: 0 16px 20px 16px;
+      position: relative;
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 78px;
+      top: 24px;
+      bottom: 24px;
+      width: 2px;
+      background-color: #80e9dd;
+      z-index: 1;
+    }
+
+    .timeline-item {
+      display: flex;
+      align-items: flex-start;
+      margin-bottom: 16px;
+      position: relative;
+    }
+
+    .time-badge {
+      width: 52px;
+      padding: 4px 6px;
+      background-color: #ccfbf1;
+      color: #0f766e;
+      font-size: 12px;
+      font-weight: 700;
+      border-radius: 6px;
+      text-align: center;
+      margin-top: 4px;
+      flex-shrink: 0;
+    }
+
+    .timeline-node {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 3px solid #00808a;
+      background-color: #ffffff;
+      margin: 9px 12px 0 12px;
+      z-index: 2;
+      flex-shrink: 0;
+    }
+
+    /* 行程卡片 */
+    .card {
+      flex: 1;
+      background-color: #ffffff;
+      border-radius: 16px;
+      padding: 14px 16px;
+      box-shadow: 0 2px 10px rgba(0, 109, 119, 0.05);
+      border: 1px solid #e6f4f1;
+    }
+
+    .card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .card-title {
+      font-size: 15px;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .nav-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 4px 10px;
+      background-color: #f0fdfa;
+      color: #0d9488;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 16px;
+      text-decoration: none;
+      flex-shrink: 0;
+      border: 1px solid #99f6e4;
+    }
+
+    .card-desc {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+      white-space: pre-line;
+      -webkit-user-select: text;
+      user-select: text;
+    }
+
+    .card-link {
+      display: inline-block;
+      margin-top: 6px;
+      color: #0284c7;
+      font-size: 12px;
+      text-decoration: underline;
+      word-break: break-all;
+    }
+
+    .quick-links {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .quick-link-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 8px;
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      border: 1px solid #bfdbfe;
+    }
+
+    /* ==================== 可愛機票卡片 ==================== */
+    .flight-ticket-card {
+      flex: 1;
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+      border-radius: 18px;
+      padding: 0;
+      box-shadow: 0 4px 15px rgba(0, 128, 138, 0.12);
+      border: 1.5px solid #99f6e4;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .flight-ticket-top {
+      background: linear-gradient(135deg, #005b66 0%, #00808a 100%);
+      color: #ffffff;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .flight-badge {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .flight-ticket-body {
+      padding: 14px 16px;
+    }
+
+    .flight-airports {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .airport-box {
+      text-align: center;
+    }
+
+    .airport-code {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f766e;
+      letter-spacing: 1px;
+    }
+
+    .airport-city {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .airport-time {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2px;
+    }
+
+    .airport-terminal {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .flight-path {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .flight-duration {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0d9488;
+      margin-bottom: 2px;
+    }
+
+    .flight-line {
+      width: 100%;
+      height: 2px;
+      background: #ccfbf1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flight-plane-icon {
+      font-size: 16px;
+      transform: rotate(90deg);
+      background: #f0fdfa;
+      padding: 0 2px;
+    }
+
+    .flight-type {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .flight-ticket-footer {
+      border-top: 1.5px dashed #b2f5ea;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ffffff;
+      font-size: 11px;
+      color: #64748b;
+      position: relative;
+    }
+
+    .barcode-line {
+      letter-spacing: 2px;
+      font-family: monospace;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: bold;
+    }
+
+    /* ==================== 清單共通樣式 (行李 & 購物) ==================== */
+    .checklist-container {
+      padding: 16px 20px;
+    }
+
+    .checklist-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px 18px;
+      box-shadow: 0 4px 15px rgba(0, 109, 119, 0.06);
+      border: 1px solid #e6f4f1;
+    }
+
+    .checklist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px dashed #e2e8f0;
+    }
+
+    .checklist-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reset-btn {
+      background: none;
+      border: 1px solid #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    .checklist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 12px;
+      background-color: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .check-item:hover {
+      background-color: #f0fdfa;
+      border-color: #ccfbf1;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      accent-color: #00808a;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      line-height: 1.4;
+      flex: 1;
+    }
+
+    .check-item.done {
+      background-color: #f1f5f9;
+      opacity: 0.6;
+    }
+
+    .check-item.done .check-text {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .item-delete-btn {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    .item-delete-btn:hover {
+      color: #ef4444;
+    }
+
+    /* ==================== 購物清單專屬樣式 ==================== */
+    .shopping-item-img {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid #ccfbf1;
+      background-color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .shopping-price-tag {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f766e;
+      background: #ccfbf1;
+      padding: 3px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    .check-item.done .shopping-price-tag {
+      background: #e2e8f0;
+      color: #94a3b8;
+    }
+
+    .shopping-form-box {
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .form-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .shop-input {
+      padding: 10px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 13px;
+      outline: none;
+      background-color: #f8fafc;
+    }
+
+    .shop-input:focus {
+      border-color: #00808a;
+      background-color: #ffffff;
+    }
+
+    .file-label-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background-color: #f0fdfa;
+      border: 1px dashed #00808a;
+      border-radius: 12px;
+      color: #00808a;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    /* 圖片預覽彈窗 Modal */
+    .img-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .img-modal-overlay.active {
+      display: flex;
+    }
+
+    .img-modal-img {
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 底部 Tab 列 (3 Tabs) */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      height: calc(60px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      background-color: #ffffff;
+      border-top: 1px solid #e6f4f1;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .bottom-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: #94a3b8;
+      font-size: 11px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 6px 0;
+    }
+
+    .bottom-tab.active {
+      color: #00808a;
+      font-weight: bold;
+    }
+
+    .tab-icon {
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- 頂部 Header -->
+    <header class="header">
+      <div class="header-title-box">
+        <h1>8/31-9/4 東京自由行</h1>
+      </div>
+    </header>
+
+    <!-- 1. 行程頁面 -->
+    <div id="pageItinerary" class="page-view active">
+      <div class="days-nav" id="daysNav"></div>
+      
+      <!-- 可愛路線地圖容器 -->
+      <div class="map-wrapper" id="mapWrapper">
+        <div class="map-header">
+          <div class="map-title">🗺️ <span id="mapDayTitle">Day 1 路線地圖</span></div>
+          <span class="map-badge" id="mapSubtitle">成田機場 ➔ 迪士尼大使大飯店</span>
+        </div>
+        <div id="routeMap"></div>
+      </div>
+
+      <div class="timeline-container" id="timelineList"></div>
+    </div>
+
+    <!-- 2. 行李清單頁面 -->
+    <div id="pageChecklist" class="page-view">
+      <div class="checklist-container">
+        <div class="checklist-card">
+          <div class="checklist-header">
+            <div class="checklist-title">🧳 隨身與託運行李</div>
+            <button class="reset-btn" onclick="resetChecklist()">一鍵重置</button>
+          </div>
+
+          <div class="checklist-items" id="checklistItemsList"></div>
+
+          <div class="form-input-row" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+            <input type="text" id="newCheckItemInput" class="shop-input" style="flex: 1;" placeholder="新增行李物品..." onkeypress="handleChecklistKeyPress(event)">
+            <button class="day-btn active" style="padding: 8px 16px; border-radius: 12px;" onclick="addNewCheckItem()">新增</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 購物清單頁面 (全新加入) -->
+    <div id="pageShopping" class="page-view">
+      <div class="checklist-container">
+        <div class="checklist-card">
+          <div class="checklist-header">
+            <div class="checklist-title">🛍️ 必買購物清單</div>
+            <button class="reset-btn" onclick="resetShoppingList()">一鍵重置</button>
+          </div>
+
+          <div class="checklist-items" id="shoppingItemsList"></div>
+
+          <!-- 新增購物物品表單 -->
+          <div class="shopping-form-box">
+            <div class="form-input-row">
+              <input type="text" id="shopItemName" class="shop-input" style="flex: 2;" placeholder="物品名稱 (如: 迪士尼髮箍)">
+              <input type="text" id="shopItemPrice" class="shop-input" style="flex: 1;" placeholder="價格 (如: ¥3,200)">
+            </div>
+
+            <div class="form-input-row" style="align-items: center; justify-content: space-between;">
+              <label class="file-label-btn" for="shopItemImageInput">
+                📷 <span id="imageUploadLabel">上傳參考圖片</span>
+              </label>
+              <input type="file" id="shopItemImageInput" accept="image/*" style="display: none;" onchange="handleImageSelected(event)">
+              
+              <button class="day-btn active" style="padding: 9px 20px; border-radius: 12px;" onclick="addNewShoppingItem()">新增商品</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部 Tab 列 -->
+    <nav class="bottom-nav">
+      <button class="bottom-tab active" onclick="switchTab('itinerary')">
+        <span class="tab-icon">🗺️</span>
+        <span>行程</span>
+      </button>
+      <button class="bottom-tab" onclick="switchTab('checklist')">
+        <span class="tab-icon">🧳</span>
+        <span>行李清單</span>
+      </button>
+      <button class="bottom-tab" onclick="switchTab('shopping')">
+        <span class="tab-icon">🛍️</span>
+        <span>購物清單</span>
+      </button>
+    </nav>
+  </div>
+
+  <!-- 點擊放大查看大圖 Modal -->
+  <div class="img-modal-overlay" id="imgModal" onclick="closeImgModal()">
+    <img id="modalPreviewImg" class="img-modal-img" src="" alt="預覽大圖">
+  </div>
+
+  <script>
+    /* ==================== 1. 行程與地圖資料 ==================== */
+    const itineraryData = [
+      {
+        dayLabel: "Day 1 (8/31)",
+        mapInfo: {
+          title: "Day 1 路線地圖",
+          subtitle: "成田機場 ➔ 迪士尼大使大飯店",
+          center: [35.69, 140.10],
+          zoom: 9,
+          markers: [
+            { lat: 35.7647, lng: 140.3863, tag: "✈️ 成田機場", mapUrl: "https://www.google.com/maps/search/?api=1&query=成田國際機場" },
+            { lat: 35.6329, lng: 139.8872, tag: "🏰 迪士尼大使", mapUrl: "https://www.google.com/maps/search/?api=1&query=迪士尼大使大飯店" },
+            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京車站" }
+          ],
+          routes: [
+            [
+              [35.7647, 140.3863],
+              [35.7330, 140.2850],
+              [35.7050, 140.1500],
+              [35.6700, 140.0500],
+              [35.6600, 139.9500],
+              [35.6329, 139.8872]
+            ]
+          ]
+        },
+        events: [
+          {
+            type: "flight",
+            time: "07:55",
+            flightNo: "CI 102 (中華航空)",
+            flightDate: "8月31日 (週一)",
+            seatClass: "經濟艙",
+            depCity: "高雄",
+            depCode: "KHH",
+            depTime: "07:55",
+            depTerminal: "航廈 1",
+            arrCity: "東京成田",
+            arrCode: "NRT",
+            arrTime: "12:35",
+            arrTerminal: "航廈 2",
+            duration: "3h 40m 直飛"
+          },
+          { 
+            time: "14:35", 
+            title: "搭車前往迪士尼大使大飯店", 
+            desc: "已購買 14:35 成田機場第2航廈 17號月台發車之班次（15:38 抵達）。\n預約號碼：(266527)",
+            location: "迪士尼大使大飯店"
+          },
+          { 
+            time: "16:00", 
+            title: "飯店 Check-in", 
+            desc: "📌 事項提醒：\n1. 記得領取「海洋優先入園券」\n2. 詢問隔天行李寄放服務",
+            location: "迪士尼大使大飯店"
+          },
+          { time: "18:00", title: "飯店休閒與看煙火", desc: "逛飯店內特色商店。" }
+        ]
+      },
+      {
+        dayLabel: "Day 2 (9/1)",
+        mapInfo: {
+          title: "Day 2 路線地圖",
+          subtitle: "迪士尼海洋 ➔ 雷姆東京京橋 (JR京葉線)",
+          center: [35.655, 139.830],
+          zoom: 11,
+          markers: [
+            { lat: 35.6267, lng: 139.8850, tag: "🏰 迪士尼海洋", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京迪士尼海洋" },
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" },
+            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京車站" }
+          ],
+          routes: [
+            [
+              [35.6267, 139.8850],
+              [35.6358, 139.8836],
+              [35.6445, 139.8606],
+              [35.6460, 139.8260],
+              [35.6580, 139.8170],
+              [35.6720, 139.7850],
+              [35.6775, 139.7695]
+            ]
+          ]
+        },
+        events: [
+          { time: "06:30", title: "退房寄行李 & 出發", desc: "辦理退房並寄放行李，出發前往海洋提早入園門口，預計 07:00 前抵達排隊（最早可能 08:00 就開門卡位）。" },
+          { 
+            time: "08:00", 
+            title: "提早入園 (Happy Entry) & 優先事項", 
+            desc: "📲 順序連環操作：\n1. 買冰雪奇緣 DPA\n2. 買堅信！夢想之海 DPA\n3. 抽 Entry Request 表演\n4. 手機 App 點午餐\n5. 搶商店 Standby Pass (SP，髮箍商店二選一)",
+            location: "東京迪士尼海洋"
+          },
+          { 
+            time: "08:30", 
+            title: "上午：髮箍/爆米花 ➔ 夢幻泉鄉", 
+            desc: "• 搶完 SP 後走過去買爆米花或髮箍\n• 視時間決定是否先去【漁村迎賓小屋】合照雪莉玫 (爆米花附近)\n• 經失落河三角洲直奔【夢幻泉鄉】\n• 依冰雪奇緣 DPA 時間決定先拍照或直接排隊，或排【樂佩公主】(若人多改排奇妙仙子妙妙小車/小飛俠)",
+            location: "東京迪士尼海洋 夢幻泉鄉"
+          },
+          { 
+            time: "12:00", 
+            title: "午餐：Yucatan Base Camp Grill", 
+            desc: "📍 Yucatan Base Camp Grill (#77)\n事先以 App 手機點餐，時間到直接入場取餐享用。",
+            location: "Yucatan Base Camp Grill"
+          },
+          { 
+            time: "13:30", 
+            title: "下午：設施補齊 & 慶典巡遊", 
+            desc: "• 補齊夢幻泉鄉尚未體驗的設施 (冰雪奇緣/樂佩公主)\n• 視時間去【失落河三角洲】與米妮/達菲合照\n• 或是回【地中海港灣】卡位「閃耀歡騰慶典」巡遊 (推論 17:00)\n• 備案空檔：【美人魚礁湖】室內區吹冷氣休息逛逛",
+            location: "東京迪士尼海洋"
+          },
+          { 
+            time: "18:00", 
+            title: "晚餐 & 夢幻泉鄉夜景", 
+            desc: "• 晚餐彈性於園區攤販或餐廳享用\n• 有空檔可回夢幻泉鄉欣賞點燈後的浪漫夜景",
+            location: "東京迪士尼海洋"
+          },
+          { 
+            time: "20:00", 
+            title: "地中海港灣：堅信！夢想之海", 
+            desc: "約 20:00 前抵達地中海港灣（表演推論 20:15 開始，約 30 分鐘）。若無 DPA 可邊走邊欣賞。",
+            location: "地中海港灣"
+          },
+          { 
+            time: "20:55", 
+            title: "迪士尼煙火 / 燈光秀", 
+            desc: "欣賞夜間璀璨煙火與燈光秀，為迪士尼劃下完美句點。",
+            location: "東京迪士尼海洋"
+          },
+          { 
+            time: "21:15", 
+            title: "取行李 ➔ 前往雷姆東京京橋飯店", 
+            desc: "領取寄放行李後步行至舞濱站，搭乘【JR京葉線】前往東京車站/京橋，預計 22:30 前抵達飯店 Check-in 休息。",
+            location: "雷姆東京京橋飯店"
+          }
+        ]
+      },
+      {
+        dayLabel: "Day 3 (9/2)",
+        mapInfo: {
+          title: "Day 3 路線地圖",
+          subtitle: "東京車站 ➔ 御殿場 Outlet (東名高速巴士)",
+          center: [35.48, 139.38],
+          zoom: 9,
+          markers: [
+            { lat: 35.3080, lng: 138.9660, tag: "🛍️ 御殿場 Outlet", mapUrl: "https://www.google.com/maps/search/?api=1&query=御殿場Premium+Outlets" },
+            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京車站" },
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" }
+          ],
+          routes: [
+            [
+              [35.6812, 139.7671],
+              [35.6600, 139.7400],
+              [35.6280, 139.6300],
+              [35.5450, 139.4900],
+              [35.4400, 139.3800],
+              [35.3700, 139.2200],
+              [35.3400, 139.0900],
+              [35.3080, 138.9660]
+            ]
+          ]
+        },
+        events: [
+          { 
+            time: "08:30", 
+            title: "搭乘高速巴士前往御殿場 (去程)", 
+            desc: "📍 上車處：東京站八重洲南口\n⏰ 時間：08:30 發車 ➔ 10:15 抵達\n🚌 車次：御殿場 Premium Outlet 7號\n💺 座位：1號車 [6A] [6B]\n💰 票價：普通四排座位 共 ¥3,600 (2人)",
+            location: "東京站 八重洲南口"
+          },
+          { 
+            time: "10:15", 
+            title: "御殿場 Premium Outlets 購物", 
+            desc: "逛 Outlet 買好買滿！\n線上地圖與品牌分類指南：",
+            link: "https://platinumaps.jp/d/premiumoutlets-gotemba?culture=en&floor=1F",
+            location: "御殿場 Premium Outlets"
+          },
+          { 
+            time: "16:30", 
+            title: "搭乘高速巴士返回東京站 (回程)", 
+            desc: "📍 上車處：御殿場 Premium Outlets\n⏰ 時間：16:30 發車 ➔ 18:10 抵達東京站日本橋口\n🚌 車次：御殿場 Premium Outlet 8號\n💺 座位：1號車 [3C] [3D]\n💰 票價：普通四排座位 共 ¥4,000 (2人)",
+            location: "御殿場 Premium Outlets"
+          },
+          { 
+            time: "18:30", 
+            title: "晚餐 & 東京車站周遭", 
+            desc: "晚餐推薦：鳥貴族 串燒\n飯後可逛逛東京車站周邊夜景與商場。",
+            location: "鳥貴族 東京車站"
+          },
+          { 
+            time: "22:00", 
+            title: "返回雷姆東京京橋飯店", 
+            desc: "返回飯店休息。",
+            location: "雷姆東京京橋飯店"
+          }
+        ]
+      },
+      {
+        dayLabel: "Day 4 (9/3)",
+        mapInfo: {
+          title: "Day 4 路線地圖",
+          subtitle: "京橋 ➔ 澀谷 ➔ 自由之丘 ➔ 澀谷 SKY",
+          center: [35.642, 139.720],
+          zoom: 12,
+          markers: [
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" },
+            { lat: 35.6620, lng: 139.7022, tag: "🌿 宮下公園", mapUrl: "https://maps.app.goo.gl/BtfZwL9ADrGLiMTs5" },
+            { lat: 35.6619, lng: 139.6984, tag: "🎮 澀谷 PARCO", mapUrl: "https://maps.app.goo.gl/D8UjWaWUh8hSmncM8" },
+            { lat: 35.6595, lng: 139.6990, tag: "👗 SHIBUYA 109", mapUrl: "https://maps.app.goo.gl/jm2vtUgpMF9o6oAu5" },
+            { lat: 35.6587, lng: 139.7020, tag: "🌃 SHIBUYA SKY", mapUrl: "https://maps.app.goo.gl/Smhr97EyWfhpqaXB8" },
+            { lat: 35.6073, lng: 139.6681, tag: "🍩 自由之丘", mapUrl: "https://maps.app.goo.gl/A83BLPLKpzkBWxtXA" }
+          ],
+          routes: [
+            [
+              [35.6775, 139.7695],
+              [35.6710, 139.7650],
+              [35.6670, 139.7480],
+              [35.6680, 139.7200],
+              [35.6650, 139.7120],
+              [35.6587, 139.7020]
+            ],
+            [
+              [35.6587, 139.7020],
+              [35.6475, 139.7000],
+              [35.6440, 139.6980],
+              [35.6275, 139.6880],
+              [35.6073, 139.6681]
+            ]
+          ]
+        },
+        events: [
+          { 
+            time: "08:44", 
+            title: "從京橋搭車至澀谷", 
+            desc: "從【京橋站】搭乘【銀座線】往澀谷方向（約 19 分鐘 / 9 站 / ¥209）。\n09:03 抵達澀谷站。" 
+          },
+          { 
+            time: "09:15", 
+            title: "宮下公園 MIYASHITA PARK", 
+            desc: "頂樓空中花園（08:00 開放），散步放鬆並俯瞰澀谷街景。",
+            mapUrl: "https://maps.app.goo.gl/BtfZwL9ADrGLiMTs5"
+          },
+          { 
+            time: "10:00", 
+            title: "澀谷 PARCO 6F 動漫天堂", 
+            desc: "步行約 5 分鐘抵達 PARCO 6F：\n• 任天堂 Nintendo TOKYO\n• 寶可夢中心 Pokémon Center\n• JUMP SHOP（注意是否需抽整理券）",
+            mapUrl: "https://maps.app.goo.gl/D8UjWaWUh8hSmncM8",
+            quickLinks: [
+              { name: "任天堂", url: "https://maps.app.goo.gl/D8UjWaWUh8hSmncM8" },
+              { name: "寶可夢中心", url: "https://maps.app.goo.gl/FN5YC7XxBesVbDoc6" },
+              { name: "JUMP SHOP", url: "https://maps.app.goo.gl/qLudzzxKKxNNtCKJA" }
+            ]
+          },
+          { 
+            time: "11:30", 
+            title: "SHIBUYA 109 百貨", 
+            desc: "步行約 5 分鐘抵達 109 百貨逛女裝流行服飾。",
+            mapUrl: "https://maps.app.goo.gl/jm2vtUgpMF9o6oAu5"
+          },
+          { 
+            time: "12:30", 
+            title: "午餐時間 (澀谷)", 
+            desc: "選項推薦：\n1. 迴轉壽司（11:00 記得先去抽號碼牌）\n2. 炸豬排 とんかつ",
+            quickLinks: [
+              { name: "活美登利 迴轉壽司", url: "https://maps.app.goo.gl/q1qWyvjsndB7mbnM9" },
+              { name: "炸豬排 とんかつ", url: "https://maps.app.goo.gl/2G3enLNQViYko8fAA" }
+            ]
+          },
+          { 
+            time: "14:50", 
+            title: "搭車前往自由之丘", 
+            desc: "從澀谷站搭乘【東急東橫線特急】至自由之丘（約 10 分鐘 / ¥180）。" 
+          },
+          { 
+            time: "15:10", 
+            title: "I'm donut ? 自由之丘店", 
+            desc: "超人氣生甜甜圈！二樓可用餐休息。",
+            location: "I'm donut ? Jiyugaoka station store"
+          },
+          { 
+            time: "16:05", 
+            title: "TODAY'S SPECIAL 自由之丘", 
+            desc: "質感生活雜貨、餐具、植栽與選物店。",
+            location: "TODAY'S SPECIAL Jiyugaoka"
+          },
+          { 
+            time: "16:50", 
+            title: "C'EST UNE BONNE IDEE", 
+            desc: "自由之丘在地人氣麵包烘焙坊。",
+            location: "C'EST UNE BONNE IDEE 自由が丘"
+          },
+          { 
+            time: "17:20", 
+            title: "小義大利 La vita", 
+            desc: "充滿歐風水都威尼斯運河與貢多拉船的拍照打卡點。",
+            mapUrl: "https://maps.app.goo.gl/cEh2Aav1BF98avES9"
+          },
+          { 
+            time: "17:45", 
+            title: "龜屋萬年堂 自由之丘總本店", 
+            desc: "必買伴手禮：生乳銅鑼燒、季節大福與和菓子。",
+            mapUrl: "https://maps.app.goo.gl/A83BLPLKpzkBWxtXA"
+          },
+          { 
+            time: "18:20", 
+            title: "自由之丘搭車 ➔ 澀谷", 
+            desc: "搭乘【東急東橫線】往澀谷（經 6 站 / 約 12 分鐘）返回澀谷車站。" 
+          },
+          { 
+            time: "19:20", 
+            title: "SHIBUYA SKY 展望台俯瞰夜景", 
+            desc: "預約 19:20 或 19:40 入場時段。\n📌 提醒：KKday 於 8/20 開放線上售票，記得提前預約！",
+            mapUrl: "https://maps.app.goo.gl/Smhr97EyWfhpqaXB8",
+            link: "https://www.kkday.com/zh-tw/product/133300-shibuya-sky-observatory-e-ticket-tokyo?cid=11798&pkg_oid=1429112&groupOid=999"
+          },
+          { 
+            time: "21:00", 
+            title: "晚餐 (澀谷或東京車站/京橋)", 
+            desc: "【澀谷選項】\n• 澀谷牛舌 (營業至 23:00)\n\n【東京/京橋選項】\n• YAKINIKU USHIJIRUSHI 燒肉 (營業至 23:00)\n• Toritetsu Kyobashi 居酒屋 (營業至 01:00)",
+            quickLinks: [
+              { name: "澀谷牛舌", url: "https://maps.app.goo.gl/tdoTHP1g4n1nMRzg6" },
+              { name: "東京燒肉 USHIJIRUSHI", url: "https://maps.app.goo.gl/XVEUXNwJXsE6CS3e9" },
+              { name: "Toritetsu Kyobashi 居酒屋", url: "https://www.google.com/maps/search/?api=1&query=Toritetsu+Kyobashi" }
+            ]
+          },
+          { 
+            time: "23:00", 
+            title: "返回雷姆東京京橋飯店", 
+            desc: "結束充實的一天，返回飯店休息。",
+            location: "雷姆東京京橋飯店"
+          }
+        ]
+      },
+      {
+        dayLabel: "Day 5 (9/4)",
+        mapInfo: {
+          title: "Day 5 路線地圖",
+          subtitle: "雷姆東京京橋 ➔ 羽田機場第3航廈 (都營淺草線/京急電鐵)",
+          center: [35.613, 139.775],
+          zoom: 11,
+          markers: [
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" },
+            { lat: 35.5494, lng: 139.7798, tag: "✈️ 羽田機場", mapUrl: "https://www.google.com/maps/search/?api=1&query=羽田機場第3航廈" }
+          ],
+          routes: [
+            [
+              [35.6775, 139.7695],
+              [35.6690, 139.7650],
+              [35.6660, 139.7580],
+              [35.6550, 139.7530],
+              [35.6440, 139.7420],
+              [35.6380, 139.7380],
+              [35.6280, 139.7380],
+              [35.6080, 139.7420],
+              [35.5600, 139.7230],
+              [35.5500, 139.7500],
+              [35.5494, 139.7798]
+            ]
+          ]
+        },
+        events: [
+          { 
+            time: "08:30", 
+            title: "退房 ➔ 前往寶町站搭車", 
+            desc: "從雷姆東京京橋飯店辦理退房，步行約 7 分鐘至【寶町站】搭乘都營淺草線（直通京急電鐵）。",
+            location: "寶町站"
+          },
+          { 
+            time: "08:37", 
+            title: "搭乘淺草線/京急電鐵直達羽田", 
+            desc: "🚆 路線：【都營淺草線】直通【京急電鐵 Airport Express】\n⏰ 推薦班次：\n• 08:37 寶町出發 ➔ 09:13 抵達羽田第3航廈（43分）\n• 08:41 寶町出發 ➔ 09:24 抵達羽田第3航廈（43分）\n💰 車資：¥550 / 人",
+            location: "寶町站"
+          },
+          { 
+            time: "09:25", 
+            title: "抵達羽田機場第3航廈", 
+            desc: "抵達機場，準備辦理登機與託行李。",
+            location: "羽田機場 第3航廈"
+          },
+          { 
+            time: "11:30", 
+            title: "羽田機場 Check-in", 
+            desc: "14:30 班機，抓 11:30 前完成報到手續。",
+            location: "羽田機場 第3航廈"
+          },
+          { 
+            time: "12:00", 
+            title: "第3航廈貴賓室休息", 
+            desc: "完成報到與安檢後，前往第3航廈貴賓室休息與用餐，準備搭機返台。",
+            location: "羽田機場 第3航廈"
+          },
+          {
+            type: "flight",
+            time: "14:30",
+            flightNo: "CI 221 (中華航空)",
+            flightDate: "9月4日 (週五)",
+            seatClass: "經濟艙",
+            depCity: "東京羽田",
+            depCode: "HND",
+            depTime: "14:30",
+            depTerminal: "航廈 3",
+            arrCity: "台北松山",
+            arrCode: "TSA",
+            arrTime: "16:55",
+            arrTerminal: "航廈 1",
+            duration: "3h 25m 直飛"
+          }
+        ]
+      }
+    ];
+
+    let currentDayIndex = 0;
+    const daysNav = document.getElementById("daysNav");
+    const timelineList = document.getElementById("timelineList");
+    let mapInstance = null;
+    let mapLayerGroup = null;
+
+    /* 初始化可愛風格 Leaflet 地圖 */
+    function initMap() {
+      mapInstance = L.map('routeMap', {
+        zoomControl: false,
+        attributionControl: false
+      }).setView([35.69, 140.10], 9);
+
+      // 使用 CartoDB Voyager 柔和繪本粉嫩風底圖
+      L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+        maxZoom: 18,
+        subdomains: 'abcd'
+      }).addTo(mapInstance);
+
+      mapLayerGroup = L.layerGroup().addTo(mapInstance);
+      updateDayMap();
+    }
+
+    /* 更新當日地圖的地標與路線 */
+    function updateDayMap() {
+      if (!mapInstance || !mapLayerGroup) return;
+      mapLayerGroup.clearLayers();
+
+      const dayData = itineraryData[currentDayIndex];
+      const mapWrapper = document.getElementById("mapWrapper");
+
+      if (!dayData.mapInfo) {
+        mapWrapper.style.display = "none";
+        return;
+      }
+
+      mapWrapper.style.display = "block";
+      document.getElementById("mapDayTitle").innerText = dayData.mapInfo.title;
+      document.getElementById("mapSubtitle").innerText = dayData.mapInfo.subtitle;
+
+      // 繪製可愛小標籤 Marker (點擊開啟 Google Maps)
+      if (dayData.mapInfo.markers) {
+        dayData.mapInfo.markers.forEach(m => {
+          const mapUrl = m.mapUrl || `https://www.google.com/maps/search/?api=1&query=${m.lat},${m.lng}`;
+          const customIcon = L.divIcon({
+            className: 'custom-map-tag-wrapper',
+            html: `<a href="${mapUrl}" target="_blank" class="custom-map-tag" title="點擊開啟 Google 地圖導航">${m.tag}</a>`,
+            iconSize: [0, 0],
+            iconAnchor: [0, 10]
+          });
+
+          L.marker([m.lat, m.lng], { icon: customIcon }).addTo(mapLayerGroup);
+        });
+      }
+
+      // 繪製路線
+      if (dayData.mapInfo.routes) {
+        dayData.mapInfo.routes.forEach(routeCoords => {
+          L.polyline(routeCoords, {
+            color: "#00808a",
+            weight: 4,
+            opacity: 0.85,
+            dashArray: "6, 8"
+          }).addTo(mapLayerGroup);
+        });
+      }
+
+      mapInstance.setView(dayData.mapInfo.center, dayData.mapInfo.zoom);
+      setTimeout(() => { mapInstance.invalidateSize(); }, 200);
+    }
+
+    function renderDayButtons() {
+      daysNav.innerHTML = itineraryData.map((day, index) => `
+        <button class="day-btn ${index === currentDayIndex ? 'active' : ''}" onclick="switchDay(${index})">
+          ${day.dayLabel}
+        </button>
+      `).join('');
+    }
+
+    function renderTimeline() {
+      const dayData = itineraryData[currentDayIndex];
+      timelineList.innerHTML = dayData.events.map(event => {
+        if (event.type === 'flight') {
+          return `
+            <div class="timeline-item">
+              <div class="time-badge">${event.time}</div>
+              <div class="timeline-node"></div>
+              <div class="flight-ticket-card">
+                <div class="flight-ticket-top">
+                  <span>✈️ ${event.flightNo}</span>
+                  <span class="flight-badge">${event.seatClass}</span>
+                </div>
+                <div class="flight-ticket-body">
+                  <div class="flight-airports">
+                    <div class="airport-box">
+                      <div class="airport-code">${event.depCode}</div>
+                      <div class="airport-city">${event.depCity}</div>
+                      <div class="airport-time">${event.depTime}</div>
+                      <div class="airport-terminal">${event.depTerminal}</div>
+                    </div>
+                    <div class="flight-path">
+                      <span class="flight-duration">${event.duration}</span>
+                      <div class="flight-line">
+                        <span class="flight-plane-icon">✈</span>
+                      </div>
+                      <span class="flight-type">${event.flightDate}</span>
+                    </div>
+                    <div class="airport-box">
+                      <div class="airport-code">${event.arrCode}</div>
+                      <div class="airport-city">${event.arrCity}</div>
+                      <div class="airport-time">${event.arrTime}</div>
+                      <div class="airport-terminal">${event.arrTerminal}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flight-ticket-footer">
+                  <span>登機證 BOARDING PASS</span>
+                  <span class="barcode-line">||||| | |||| ||| |</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        let targetMapUrl = event.mapUrl;
+        if (!targetMapUrl && event.location) {
+          targetMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`;
+        }
+
+        const quickLinksHtml = event.quickLinks 
+          ? `<div class="quick-links">
+              ${event.quickLinks.map(ql => `<a href="${ql.url}" target="_blank" class="quick-link-chip">📍 ${ql.name}</a>`).join('')}
+             </div>`
+          : '';
+
+        return `
+          <div class="timeline-item">
+            <div class="time-badge">${event.time}</div>
+            <div class="timeline-node"></div>
+            <div class="card">
+              <div class="card-header">
+                <span class="card-title">${event.title}</span>
+                ${targetMapUrl ? `<a href="${targetMapUrl}" target="_blank" class="nav-btn">📍 導航</a>` : ''}
+              </div>
+              <p class="card-desc">${event.desc}</p>
+              ${event.link ? `<a href="${event.link}" target="_blank" class="card-link">🔗 開啟售票/預約連結</a>` : ''}
+              ${quickLinksHtml}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function switchDay(index) {
+      currentDayIndex = index;
+      renderDayButtons();
+      renderTimeline();
+      updateDayMap();
+    }
+
+    /* ==================== 2. 行李清單邏輯 ==================== */
+    const defaultChecklist = [
+      { text: "防曬", checked: false },
+      { text: "衛生紙、濕紙巾", checked: false },
+      { text: "耳塞、牙刷", checked: false },
+      { text: "小塑膠袋（垃圾袋）", checked: false },
+      { text: "換洗包(護髮)、保養品、化妝品(卸妝等)、梳子", checked: false },
+      { text: "五天衣物", checked: false },
+      { text: "護照（含影本）", checked: false },
+      { text: "身分證", checked: false },
+      { text: "錢包（信用卡、日幣）", checked: false },
+      { text: "酒精、常備藥、OK繃", checked: false },
+      { text: "豆腐頭、充電線、行動電源", checked: false },
+      { text: "雨傘、外套", checked: false }
+    ];
+
+    let checklist = JSON.parse(localStorage.getItem('tokyo_luggage_checklist')) || defaultChecklist;
+
+    function renderChecklist() {
+      const container = document.getElementById("checklistItemsList");
+      container.innerHTML = checklist.map((item, index) => `
+        <div class="check-item ${item.checked ? 'done' : ''}" onclick="toggleCheck(${index}, event)">
+          <input type="checkbox" ${item.checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleCheck(${index});">
+          <span class="check-text">${item.text}</span>
+          <button class="item-delete-btn" title="刪除此項" onclick="deleteCheckItem(${index}, event)">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function toggleCheck(index, event) {
+      if (event && event.target.tagName === 'BUTTON') return;
+      checklist[index].checked = !checklist[index].checked;
+      saveChecklist();
+      renderChecklist();
+    }
+
+    function addNewCheckItem() {
+      const input = document.getElementById("newCheckItemInput");
+      const text = input.value.trim();
+      if (!text) return;
+      checklist.push({ text: text, checked: false });
+      saveChecklist();
+      renderChecklist();
+      input.value = "";
+    }
+
+    function handleChecklistKeyPress(event) {
+      if (event.key === 'Enter') addNewCheckItem();
+    }
+
+    function deleteCheckItem(index, event) {
+      event.stopPropagation();
+      checklist.splice(index, 1);
+      saveChecklist();
+      renderChecklist();
+    }
+
+    function resetChecklist() {
+      if (confirm("確定要重置所有行李勾選狀態嗎？")) {
+        checklist.forEach(item => item.checked = false);
+        saveChecklist();
+        renderChecklist();
+      }
+    }
+
+    function saveChecklist() {
+      localStorage.setItem('tokyo_luggage_checklist', JSON.stringify(checklist));
+    }
+
+    /* ==================== 3. 購物清單邏輯 (支援圖片與價格) ==================== */
+    const defaultShoppingList = [
+      { name: "迪士尼 25週年限定髮箍", price: "¥2,400", img: "", checked: false },
+      { name: "達菲/雪莉玫 吊飾娃娃", price: "¥2,600", img: "", checked: false },
+      { name: "龜屋萬年堂 生乳銅鑼燒", price: "¥350", img: "", checked: false },
+      { name: "I'm donut ? 人氣生甜甜圈", price: "¥400", img: "", checked: false }
+    ];
+
+    let shoppingList = JSON.parse(localStorage.getItem('tokyo_shopping_list')) || defaultShoppingList;
+    let tempUploadedImgBase64 = "";
+
+    function renderShoppingList() {
+      const container = document.getElementById("shoppingItemsList");
+      if (shoppingList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px; font-size:13px;">購物清單目前是空的，快把想買的商品加進來吧！</div>`;
+        return;
+      }
+
+      container.innerHTML = shoppingList.map((item, index) => `
+        <div class="check-item ${item.checked ? 'done' : ''}" onclick="toggleShoppingCheck(${index}, event)">
+          <input type="checkbox" ${item.checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleShoppingCheck(${index});">
+          
+          ${item.img ? `<img src="${item.img}" class="shopping-item-img" onclick="openImgModal('${item.img}', event)" title="點擊放大圖片">` : ''}
+          
+          <span class="check-text">${item.name}</span>
+          
+          ${item.price ? `<span class="shopping-price-tag">${item.price}</span>` : ''}
+          
+          <button class="item-delete-btn" title="刪除此項" onclick="deleteShoppingItem(${index}, event)">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function toggleShoppingCheck(index, event) {
+      if (event && (event.target.tagName === 'BUTTON' || event.target.tagName === 'IMG')) return;
+      shoppingList[index].checked = !shoppingList[index].checked;
+      saveShoppingList();
+      renderShoppingList();
+    }
+
+    function handleImageSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        tempUploadedImgBase64 = e.target.result;
+        document.getElementById("imageUploadLabel").innerText = "✅ 圖片已選取";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addNewShoppingItem() {
+      const nameInput = document.getElementById("shopItemName");
+      const priceInput = document.getElementById("shopItemPrice");
+      const name = nameInput.value.trim();
+      const price = priceInput.value.trim();
+
+      if (!name) {
+        alert("請輸入想購買的商品名稱！");
+        return;
+      }
+
+      shoppingList.push({
+        name: name,
+        price: price,
+        img: tempUploadedImgBase64,
+        checked: false
+      });
+
+      saveShoppingList();
+      renderShoppingList();
+
+      // 清空輸入欄位
+      nameInput.value = "";
+      priceInput.value = "";
+      tempUploadedImgBase64 = "";
+      document.getElementById("shopItemImageInput").value = "";
+      document.getElementById("imageUploadLabel").innerText = "上傳參考圖片";
+    }
+
+    function deleteShoppingItem(index, event) {
+      event.stopPropagation();
+      shoppingList.splice(index, 1);
+      saveShoppingList();
+      renderShoppingList();
+    }
+
+    function resetShoppingList() {
+      if (confirm("確定要重置所有購物清單的勾選狀態嗎？")) {
+        shoppingList.forEach(item => item.checked = false);
+        saveShoppingList();
+        renderShoppingList();
+      }
+    }
+
+    function saveShoppingList() {
+      localStorage.setItem('tokyo_shopping_list', JSON.stringify(shoppingList));
+    }
+
+    /* 圖片放大預覽 */
+    function openImgModal(imgSrc, event) {
+      if (event) event.stopPropagation();
+      document.getElementById("modalPreviewImg").src = imgSrc;
+      document.getElementById("imgModal").classList.add("active");
+    }
+
+    function closeImgModal() {
+      document.getElementById("imgModal").classList.remove("active");
+    }
+
+    /* ==================== 4. 頁面分頁切換 (3 Tabs) ==================== */
+    function switchTab(tabName) {
+      const pageItinerary = document.getElementById("pageItinerary");
+      const pageChecklist = document.getElementById("pageChecklist");
+      const pageShopping = document.getElementById("pageShopping");
+      const tabs = document.querySelectorAll(".bottom-tab");
+
+      tabs.forEach(tab => tab.classList.remove("active"));
+      pageItinerary.classList.remove("active");
+      pageChecklist.classList.remove("active");
+      pageShopping.classList.remove("active");
+
+      if (tabName === 'itinerary') {
+        pageItinerary.classList.add("active");
+        tabs[0].classList.add("active");
+        setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 200);
+      } else if (tabName === 'checklist') {
+        pageChecklist.classList.add("active");
+        tabs[1].classList.add("active");
+      } else if (tabName === 'shopping') {
+        pageShopping.classList.add("active");
+        tabs[2].classList.add("active");
+      }
+    }
+
+    // 初始化網頁
+    renderDayButtons();
+    renderTimeline();
+    initMap();
+    renderChecklist();
+    renderShoppingList();
+  </script>
+</body>
+</html>
