@@ -153,12 +153,12 @@
       z-index: 1;
     }
 
-    /* 自訂地圖可愛小標籤 Marker */
+    /* 自訂地圖可愛小標籤 Marker (支援點擊連動 Google Maps) */
     .custom-map-tag {
       background: #ffffff;
       border: 1.5px solid #00808a;
       border-radius: 20px;
-      padding: 3px 8px;
+      padding: 4px 9px;
       font-size: 11px;
       font-weight: 800;
       color: #005b66;
@@ -167,7 +167,15 @@
       display: flex;
       align-items: center;
       gap: 3px;
+      text-decoration: none;
+      cursor: pointer;
       transform: translate(-50%, -50%);
+      transition: transform 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .custom-map-tag:active {
+      transform: translate(-50%, -45%) scale(0.95);
+      background-color: #f0fdfa;
     }
 
     .custom-map-tag::after {
@@ -682,9 +690,9 @@
           center: [35.69, 140.10],
           zoom: 9,
           markers: [
-            { lat: 35.7647, lng: 140.3863, tag: "✈️ 成田機場" },
-            { lat: 35.6329, lng: 139.8872, tag: "🏰 迪士尼大使" },
-            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站" }
+            { lat: 35.7647, lng: 140.3863, tag: "✈️ 成田機場", mapUrl: "https://www.google.com/maps/search/?api=1&query=成田國際機場" },
+            { lat: 35.6329, lng: 139.8872, tag: "🏰 迪士尼大使", mapUrl: "https://www.google.com/maps/search/?api=1&query=迪士尼大使大飯店" },
+            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京車站" }
           ],
           routes: [
             [
@@ -737,9 +745,9 @@
           center: [35.655, 139.830],
           zoom: 11,
           markers: [
-            { lat: 35.6267, lng: 139.8850, tag: "🏰 迪士尼海洋" },
-            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋" },
-            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站" }
+            { lat: 35.6267, lng: 139.8850, tag: "🏰 迪士尼海洋", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京迪士尼海洋" },
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" },
+            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京車站" }
           ],
           routes: [
             [
@@ -813,9 +821,9 @@
           center: [35.48, 139.38],
           zoom: 9,
           markers: [
-            { lat: 35.3080, lng: 138.9660, tag: "🛍️ 御殿場 Outlet" },
-            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站" },
-            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋" }
+            { lat: 35.3080, lng: 138.9660, tag: "🛍️ 御殿場 Outlet", mapUrl: "https://www.google.com/maps/search/?api=1&query=御殿場Premium+Outlets" },
+            { lat: 35.6812, lng: 139.7671, tag: "🏢 東京車站", mapUrl: "https://www.google.com/maps/search/?api=1&query=東京車站" },
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" }
           ],
           routes: [
             [
@@ -872,12 +880,12 @@
           center: [35.642, 139.720],
           zoom: 12,
           markers: [
-            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋" },
-            { lat: 35.6620, lng: 139.7022, tag: "🌿 宮下公園" },
-            { lat: 35.6619, lng: 139.6984, tag: "🎮 澀谷 PARCO" },
-            { lat: 35.6595, lng: 139.6990, tag: "👗 SHIBUYA 109" },
-            { lat: 35.6587, lng: 139.7020, tag: "🌃 SHIBUYA SKY" },
-            { lat: 35.6073, lng: 139.6681, tag: "🍩 自由之丘" }
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" },
+            { lat: 35.6620, lng: 139.7022, tag: "🌿 宮下公園", mapUrl: "https://maps.app.goo.gl/BtfZwL9ADrGLiMTs5" },
+            { lat: 35.6619, lng: 139.6984, tag: "🎮 澀谷 PARCO", mapUrl: "https://maps.app.goo.gl/D8UjWaWUh8hSmncM8" },
+            { lat: 35.6595, lng: 139.6990, tag: "👗 SHIBUYA 109", mapUrl: "https://maps.app.goo.gl/jm2vtUgpMF9o6oAu5" },
+            { lat: 35.6587, lng: 139.7020, tag: "🌃 SHIBUYA SKY", mapUrl: "https://maps.app.goo.gl/Smhr97EyWfhpqaXB8" },
+            { lat: 35.6073, lng: 139.6681, tag: "🍩 自由之丘", mapUrl: "https://maps.app.goo.gl/A83BLPLKpzkBWxtXA" }
           ],
           routes: [
             [
@@ -1008,23 +1016,22 @@
           center: [35.613, 139.775],
           zoom: 11,
           markers: [
-            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋" },
-            { lat: 35.5494, lng: 139.7798, tag: "✈️ 羽田機場 (第3航廈)" }
+            { lat: 35.6775, lng: 139.7695, tag: "🏨 雷姆東京京橋", mapUrl: "https://www.google.com/maps/search/?api=1&query=雷姆東京京橋飯店" },
+            { lat: 35.5494, lng: 139.7798, tag: "✈️ 羽田機場", mapUrl: "https://www.google.com/maps/search/?api=1&query=羽田機場第3航廈" }
           ],
           routes: [
-            // 都營淺草線 (寶町) 直通 京急電鐵 (品川/蒲田) ➔ 羽田機場第3航廈
             [
-              [35.6775, 139.7695], // 京橋 / 寶町
-              [35.6690, 139.7650], // 東銀座
-              [35.6660, 139.7580], // 新橋
-              [35.6550, 139.7530], // 大門
-              [35.6440, 139.7420], // 三田
-              [35.6380, 139.7380], // 泉岳寺
-              [35.6280, 139.7380], // 品川
-              [35.6080, 139.7420], // 青物橫丁
-              [35.5600, 139.7230], // 京急蒲田
-              [35.5500, 139.7500], // 天空橋
-              [35.5494, 139.7798]  // 羽田機場第3航廈
+              [35.6775, 139.7695],
+              [35.6690, 139.7650],
+              [35.6660, 139.7580],
+              [35.6550, 139.7530],
+              [35.6440, 139.7420],
+              [35.6380, 139.7380],
+              [35.6280, 139.7380],
+              [35.6080, 139.7420],
+              [35.5600, 139.7230],
+              [35.5500, 139.7500],
+              [35.5494, 139.7798]
             ]
           ]
         },
@@ -1102,7 +1109,7 @@
       updateDayMap();
     }
 
-    /* 更新當日地圖的地標與路線 */
+    /* 更新當日地圖的地標與路線 (支援點擊開啟 Google Maps) */
     function updateDayMap() {
       if (!mapInstance || !mapLayerGroup) return;
       mapLayerGroup.clearLayers();
@@ -1119,12 +1126,13 @@
       document.getElementById("mapDayTitle").innerText = dayData.mapInfo.title;
       document.getElementById("mapSubtitle").innerText = dayData.mapInfo.subtitle;
 
-      // 繪製可愛小標籤 Marker
+      // 繪製可愛小標籤 Marker (點擊開啟 Google Maps)
       if (dayData.mapInfo.markers) {
         dayData.mapInfo.markers.forEach(m => {
+          const mapUrl = m.mapUrl || `https://www.google.com/maps/search/?api=1&query=${m.lat},${m.lng}`;
           const customIcon = L.divIcon({
             className: 'custom-map-tag-wrapper',
-            html: `<div class="custom-map-tag">${m.tag}</div>`,
+            html: `<a href="${mapUrl}" target="_blank" class="custom-map-tag" title="點擊開啟 Google 地圖導航">${m.tag}</a>`,
             iconSize: [0, 0],
             iconAnchor: [0, 10]
           });
