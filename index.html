@@ -313,6 +313,27 @@
       word-break: break-all;
     }
 
+    /* 車票圖片展示樣式 */
+    .card-img-container {
+      margin-top: 10px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid #ccfbf1;
+      background-color: #f0fdfa;
+    }
+
+    .card-img {
+      width: 100%;
+      display: block;
+      cursor: pointer;
+      border-radius: 12px;
+      transition: transform 0.2s ease;
+    }
+
+    .card-img:active {
+      transform: scale(0.98);
+    }
+
     .quick-links {
       margin-top: 8px;
       display: flex;
@@ -667,7 +688,6 @@
       border-color: #fde68a;
     }
 
-    /* iOS 經典黃金圓形勾選圈 */
     .ios-checkbox {
       width: 22px;
       height: 22px;
@@ -741,7 +761,6 @@
       border-radius: 8px;
     }
 
-    /* iOS 隨手記事本區域 */
     .ios-paper-card {
       background: #fffdf5;
       border: 1px solid #fde68a;
@@ -913,7 +932,7 @@
       </div>
     </div>
 
-    <!-- 4. iOS 備忘錄 & 每日待辦頁面 (全新加入) -->
+    <!-- 4. iOS 備忘錄 & 每日待辦頁面 -->
     <div id="pageNotes" class="page-view">
       <div class="checklist-container">
         
@@ -926,12 +945,10 @@
             <button class="reset-btn" style="border-color: #fde68a; color: #b45309;" onclick="resetNotesTodos()">一鍵重置</button>
           </div>
 
-          <!-- 天數快速篩選 -->
           <div class="ios-notes-filter" id="notesFilterNav"></div>
 
           <div class="checklist-items" id="notesTodosList"></div>
 
-          <!-- 新增待辦輸入欄 -->
           <div class="form-input-row" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #fef3c7;">
             <select id="newTodoDaySelect" class="shop-input" style="width: 100px; font-weight: 700; color: #b45309; background-color: #fffdf5;">
               <option value="全部">一般</option>
@@ -946,7 +963,7 @@
           </div>
         </div>
 
-        <!-- iOS 隨手筆記本卡片 (即打即存) -->
+        <!-- 隨手筆記本 -->
         <div class="ios-paper-card">
           <div class="ios-paper-header">
             <span>📌 自由速記筆記本 (即時自動儲存)</span>
@@ -1030,7 +1047,8 @@
             time: "14:35", 
             title: "搭車前往迪士尼大使大飯店", 
             desc: "已購買 14:35 成田機場第2航廈 17號月台發車之班次（15:38 抵達）。\n預約號碼：(266527)",
-            location: "迪士尼大使大飯店"
+            location: "迪士尼大使大飯店",
+            image: "ticket-day1.png"
           },
           { 
             time: "16:00", 
@@ -1147,7 +1165,8 @@
             time: "08:30", 
             title: "搭乘高速巴士前往御殿場 (去程)", 
             desc: "📍 上車處：東京站八重洲南口\n⏰ 時間：08:30 發車 ➔ 10:15 抵達\n🚌 車次：御殿場 Premium Outlet 7號\n💺 座位：1號車 [6A] [6B]\n💰 票價：普通四排座位 共 ¥3,600 (2人)",
-            location: "東京站 八重洲南口"
+            location: "東京站 八重洲南口",
+            image: "ticket-day3-go.png"
           },
           { 
             time: "10:15", 
@@ -1160,7 +1179,8 @@
             time: "16:30", 
             title: "搭乘高速巴士返回東京站 (回程)", 
             desc: "📍 上車處：御殿場 Premium Outlets\n⏰ 時間：16:30 發車 ➔ 18:10 抵達東京站日本橋口\n🚌 車次：御殿場 Premium Outlet 8號\n💺 座位：1號車 [3C] [3D]\n💰 票價：普通四排座位 共 ¥4,000 (2人)",
-            location: "御殿場 Premium Outlets"
+            location: "御殿場 Premium Outlets",
+            image: "ticket-day3-back.png"
           },
           { 
             time: "18:30", 
@@ -1268,7 +1288,7 @@
             time: "16:50", 
             title: "C'EST UNE BONNE IDEE", 
             desc: "自由之丘在地人氣麵包烘焙坊。",
-            location: "C'EST UNE BONNE IDEE 自由が丘"
+            location: "C'EST UNE BONNE IDEE 自由加丘"
           },
           { 
             time: "17:20", 
@@ -1533,6 +1553,13 @@
               </div>
               <p class="card-desc">${event.desc}</p>
               ${event.link ? `<a href="${event.link}" target="_blank" class="card-link">🔗 開啟售票/預約連結</a>` : ''}
+              ${event.image ? `
+                <div class="card-img-container">
+                  <a href="${event.image}" target="_blank">
+                    <img src="${event.image}" alt="車票/圖片" class="card-img" title="點擊查看原圖">
+                  </a>
+                </div>
+              ` : ''}
               ${quickLinksHtml}
             </div>
           </div>
@@ -1618,7 +1645,10 @@
 
     /* ==================== 3. 購物清單邏輯 ==================== */
     const defaultShoppingList = [
-      { name: "迪士尼 25週年限定髮箍", price: "¥2,400", img: "", checked: false }
+      { name: "迪士尼 25週年限定髮箍", price: "¥2,400", img: "", checked: false },
+      { name: "達菲/雪莉玫 吊飾娃娃", price: "¥2,600", img: "", checked: false },
+      { name: "龜屋萬年堂 生乳銅鑼燒", price: "¥350", img: "", checked: false },
+      { name: "I'm donut ? 人氣生甜甜圈", price: "¥400", img: "", checked: false }
     ];
 
     let shoppingList = JSON.parse(localStorage.getItem('tokyo_shopping_list')) || defaultShoppingList;
