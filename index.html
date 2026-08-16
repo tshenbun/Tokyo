@@ -37,7 +37,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      padding-bottom: 20px;
+      padding-bottom: 25px;
       box-shadow: 0 0 25px rgba(0, 128, 138, 0.2);
       min-height: 100vh;
     }
@@ -336,41 +336,62 @@
           { 
             time: "09:15", 
             title: "宮下公園 MIYASHITA PARK", 
-            desc: "頂樓空中花園（08:00 開放），欣賞澀谷市景。",
-            location: "MIYASHITA PARK"
+            desc: "頂樓空中花園（08:00 開放），散步放鬆並俯瞰澀谷街景。",
+            location: "MIYASHITA PARK",
+            link: "https://maps.app.goo.gl/BtfZwL9ADrGLiMTs5"
           },
           { 
             time: "10:00", 
-            title: "澀谷 PARCO 6樓動漫天堂", 
+            title: "澀谷 PARCO 6F 動漫天堂", 
             desc: "步行約 5 分鐘抵達 PARCO 6F：\n• 任天堂 Nintendo TOKYO\n• 寶可夢中心 Pokémon Center\n• JUMP SHOP（需注意是否抽整理券）",
             location: "澀谷 PARCO"
           },
           { 
             time: "11:30", 
             title: "SHIBUYA 109 百貨", 
-            desc: "逛女裝流行服飾。",
-            location: "SHIBUYA 109"
+            desc: "步行約 5 分鐘抵達 109 百貨逛女裝流行服飾。",
+            location: "SHIBUYA 109",
+            link: "https://maps.app.goo.gl/jm2vtUgpMF9o6oAu5"
           },
           { 
             time: "12:30", 
-            title: "午餐時間", 
-            desc: "選項：\n1. 旋轉壽司（11:00 記得先抽號碼牌）\n2. 炸豬排" 
+            title: "午餐時間 (澀谷)", 
+            desc: "選項推薦：\n1. 迴轉壽司（11:00 記得先去抽號碼牌）\n2. 炸豬排 とんかつ",
+            location: "澀谷"
           },
           { 
-            time: "14:00", 
-            title: "前往自由之丘", 
-            desc: "從澀谷站搭乘【東急東橫線特急】至自由之丘（約 10 分鐘 / ¥180）。逛甜點與雜貨。",
+            time: "14:50", 
+            title: "搭車前往自由之丘", 
+            desc: "從澀谷站搭乘【東急東橫線特急】至自由之丘（約 10 分鐘 / ¥180）。" 
+          },
+          { 
+            time: "15:10", 
+            title: "自由之丘：甜點與生活選物巡禮", 
+            desc: "🍩 15:10-16:00 I'm donut ? (2F用餐)\n🌿 16:05-16:45 TODAY'S SPECIAL (生活雜貨)\n🥐 16:50-17:10 C'EST UNE BONNE IDEE (人氣麵包)\n🏰 17:20-17:40 La vita (小義大利水都歐風造景)\n🍵 17:45-18:10 龜屋萬年堂 總本店 (生乳銅鑼燒/大福)",
             location: "自由之丘"
           },
           { 
-            time: "18:30", 
-            title: "晚餐（澀谷/東京）", 
-            desc: "推薦：牛舌定食，晚上行程彈性規劃（抓預算約 ¥400）。" 
+            time: "18:20", 
+            title: "自由之丘搭車 ➔ 澀谷", 
+            desc: "搭乘【東急東橫線】往澀谷（經 6 站 / 約 12 分鐘）返回澀谷車站。" 
           },
           { 
-            time: "22:00", 
+            time: "19:20", 
+            title: "SHIBUYA SKY 展望台俯瞰夜景", 
+            desc: "預約 19:20 或 19:40 入場時段。\n📌 提醒：KKday 於 8/20 開放線上售票，記得提前預約！",
+            location: "SHIBUYA SKY",
+            link: "https://www.kkday.com/zh-tw/product/133300-shibuya-sky-observatory-e-ticket-tokyo?cid=11798&pkg_oid=1429112&groupOid=999"
+          },
+          { 
+            time: "21:00", 
+            title: "晚餐 (澀谷或東京車站/京橋)", 
+            desc: "【澀谷選項】\n• 澀谷牛舌 (營業至 23:00)\n\n【東京/京橋選項】\n• YAKINIKU USHIJIRUSHI 燒肉 (營業至 23:00)\n• Toritetsu Kyobashi 居酒屋 (營業至 01:00)",
+            location: "雷姆東京京橋飯店"
+          },
+          { 
+            time: "23:00", 
             title: "返回雷姆東京京橋飯店", 
-            desc: "返回飯店休息。",
+            desc: "結束充實的一天，返回飯店休息。",
             location: "雷姆東京京橋飯店"
           }
         ]
@@ -441,7 +462,7 @@
                 ${mapSearchUrl ? `<a href="${mapSearchUrl}" target="_blank" class="nav-btn">📍 導航</a>` : ''}
               </div>
               <p class="card-desc">${event.desc}</p>
-              ${event.link ? `<a href="${event.link}" target="_blank" class="card-link">🔗 開啟網頁/預約連結</a>` : ''}
+              ${event.link ? `<a href="${event.link}" target="_blank" class="card-link">🔗 開啟預約/網頁連結</a>` : ''}
             </div>
           </div>
         `;
