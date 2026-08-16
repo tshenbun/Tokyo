@@ -71,7 +71,7 @@
       align-items: center;
     }
 
-    /* 玻璃擬態質感標題膠囊 */
+    /* 玻璃擬態標題膠囊 */
     .header-title-box {
       background: rgba(0, 45, 55, 0.55);
       backdrop-filter: blur(8px);
@@ -174,7 +174,6 @@
       z-index: 1;
     }
 
-    /* 自訂地圖可愛小標籤 Marker (支援點擊連動 Google Maps) */
     .custom-map-tag {
       background: #ffffff;
       border: 1.5px solid #00808a;
@@ -191,7 +190,7 @@
       text-decoration: none;
       cursor: pointer;
       transform: translate(-50%, -50%);
-      transition: transform 0.15s ease, box-shadow 0.15s ease;
+      transition: transform 0.15s ease;
     }
 
     .custom-map-tag:active {
@@ -335,7 +334,7 @@
       border: 1px solid #bfdbfe;
     }
 
-    /* ==================== 可愛機票卡片專屬樣式 ==================== */
+    /* ==================== 可愛機票卡片 ==================== */
     .flight-ticket-card {
       flex: 1;
       background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
@@ -464,7 +463,7 @@
       font-weight: bold;
     }
 
-    /* ==================== 行李清單專屬樣式 ==================== */
+    /* ==================== 清單共通樣式 (行李 & 購物) ==================== */
     .checklist-container {
       padding: 16px 20px;
     }
@@ -514,7 +513,7 @@
 
     .check-item {
       display: flex;
-      align-items: flex-start;
+      align-items: center;
       gap: 12px;
       padding: 10px 12px;
       background-color: #f8fafc;
@@ -532,7 +531,6 @@
     .check-item input[type="checkbox"] {
       width: 20px;
       height: 20px;
-      margin-top: 1px;
       accent-color: #00808a;
       cursor: pointer;
       flex-shrink: 0;
@@ -544,7 +542,6 @@
       color: #334155;
       line-height: 1.4;
       flex: 1;
-      transition: all 0.2s ease;
     }
 
     .check-item.done {
@@ -570,17 +567,49 @@
       color: #ef4444;
     }
 
-    .add-item-box {
-      display: flex;
-      gap: 8px;
+    /* ==================== 購物清單專屬樣式 ==================== */
+    .shopping-item-img {
+      width: 46px;
+      height: 46px;
+      border-radius: 10px;
+      object-fit: cover;
+      border: 1px solid #ccfbf1;
+      background-color: #ffffff;
+      flex-shrink: 0;
+    }
+
+    .shopping-price-tag {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f766e;
+      background: #ccfbf1;
+      padding: 3px 8px;
+      border-radius: 10px;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    .check-item.done .shopping-price-tag {
+      background: #e2e8f0;
+      color: #94a3b8;
+    }
+
+    .shopping-form-box {
       margin-top: 16px;
       padding-top: 14px;
       border-top: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
     }
 
-    .add-item-input {
-      flex: 1;
-      padding: 10px 14px;
+    .form-input-row {
+      display: flex;
+      gap: 8px;
+    }
+
+    .shop-input {
+      padding: 10px 12px;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
       font-size: 13px;
@@ -588,24 +617,50 @@
       background-color: #f8fafc;
     }
 
-    .add-item-input:focus {
+    .shop-input:focus {
       border-color: #00808a;
       background-color: #ffffff;
     }
 
-    .add-item-btn {
-      padding: 10px 16px;
-      background: linear-gradient(135deg, #005b66 0%, #00808a 100%);
-      color: #ffffff;
-      font-size: 13px;
-      font-weight: 700;
-      border: none;
+    .file-label-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background-color: #f0fdfa;
+      border: 1px dashed #00808a;
       border-radius: 12px;
+      color: #00808a;
+      font-size: 12px;
+      font-weight: 700;
       cursor: pointer;
-      white-space: nowrap;
     }
 
-    /* 底部 Tab 列 */
+    /* 圖片預覽彈窗 Modal */
+    .img-modal-overlay {
+      display: none;
+      position: fixed;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(0, 0, 0, 0.85);
+      z-index: 2000;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .img-modal-overlay.active {
+      display: flex;
+    }
+
+    .img-modal-img {
+      max-width: 90%;
+      max-height: 80vh;
+      border-radius: 16px;
+      box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    }
+
+    /* 底部 Tab 列 (3 Tabs) */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -628,7 +683,7 @@
       align-items: center;
       gap: 3px;
       color: #94a3b8;
-      font-size: 12px;
+      font-size: 11px;
       border: none;
       background: none;
       cursor: pointer;
@@ -641,14 +696,14 @@
     }
 
     .tab-icon {
-      font-size: 20px;
+      font-size: 18px;
     }
   </style>
 </head>
 <body>
 
   <div class="app-container">
-    <!-- 頂部 Header：內嵌 25 週年 Sparkling Jubilee 海報與毛玻璃標題 -->
+    <!-- 頂部 Header -->
     <header class="header">
       <div class="header-title-box">
         <h1>8/31-9/4 東京自由行</h1>
@@ -682,9 +737,40 @@
 
           <div class="checklist-items" id="checklistItemsList"></div>
 
-          <div class="add-item-box">
-            <input type="text" id="newCheckItemInput" class="add-item-input" placeholder="新增其他行李物品..." onkeypress="handleChecklistKeyPress(event)">
-            <button class="add-item-btn" onclick="addNewCheckItem()">新增</button>
+          <div class="form-input-row" style="margin-top: 16px; padding-top: 14px; border-top: 1px solid #f1f5f9;">
+            <input type="text" id="newCheckItemInput" class="shop-input" style="flex: 1;" placeholder="新增行李物品..." onkeypress="handleChecklistKeyPress(event)">
+            <button class="day-btn active" style="padding: 8px 16px; border-radius: 12px;" onclick="addNewCheckItem()">新增</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 3. 購物清單頁面 (全新加入) -->
+    <div id="pageShopping" class="page-view">
+      <div class="checklist-container">
+        <div class="checklist-card">
+          <div class="checklist-header">
+            <div class="checklist-title">🛍️ 必買購物清單</div>
+            <button class="reset-btn" onclick="resetShoppingList()">一鍵重置</button>
+          </div>
+
+          <div class="checklist-items" id="shoppingItemsList"></div>
+
+          <!-- 新增購物物品表單 -->
+          <div class="shopping-form-box">
+            <div class="form-input-row">
+              <input type="text" id="shopItemName" class="shop-input" style="flex: 2;" placeholder="物品名稱 (如: 迪士尼髮箍)">
+              <input type="text" id="shopItemPrice" class="shop-input" style="flex: 1;" placeholder="價格 (如: ¥3,200)">
+            </div>
+
+            <div class="form-input-row" style="align-items: center; justify-content: space-between;">
+              <label class="file-label-btn" for="shopItemImageInput">
+                📷 <span id="imageUploadLabel">上傳參考圖片</span>
+              </label>
+              <input type="file" id="shopItemImageInput" accept="image/*" style="display: none;" onchange="handleImageSelected(event)">
+              
+              <button class="day-btn active" style="padding: 9px 20px; border-radius: 12px;" onclick="addNewShoppingItem()">新增商品</button>
+            </div>
           </div>
         </div>
       </div>
@@ -700,7 +786,16 @@
         <span class="tab-icon">🧳</span>
         <span>行李清單</span>
       </button>
+      <button class="bottom-tab" onclick="switchTab('shopping')">
+        <span class="tab-icon">🛍️</span>
+        <span>購物清單</span>
+      </button>
     </nav>
+  </div>
+
+  <!-- 點擊放大查看大圖 Modal -->
+  <div class="img-modal-overlay" id="imgModal" onclick="closeImgModal()">
+    <img id="modalPreviewImg" class="img-modal-img" src="" alt="預覽大圖">
   </div>
 
   <script>
@@ -1133,7 +1228,7 @@
       updateDayMap();
     }
 
-    /* 更新當日地圖的地標與路線 (支援點擊開啟 Google Maps) */
+    /* 更新當日地圖的地標與路線 */
     function updateDayMap() {
       if (!mapInstance || !mapLayerGroup) return;
       mapLayerGroup.clearLayers();
@@ -1270,7 +1365,7 @@
       updateDayMap();
     }
 
-    /* ==================== 2. 行李清單邏輯 (LocalStorage 記憶) ==================== */
+    /* ==================== 2. 行李清單邏輯 ==================== */
     const defaultChecklist = [
       { text: "防曬", checked: false },
       { text: "衛生紙、濕紙巾", checked: false },
@@ -1317,9 +1412,7 @@
     }
 
     function handleChecklistKeyPress(event) {
-      if (event.key === 'Enter') {
-        addNewCheckItem();
-      }
+      if (event.key === 'Enter') addNewCheckItem();
     }
 
     function deleteCheckItem(index, event) {
@@ -1330,7 +1423,7 @@
     }
 
     function resetChecklist() {
-      if (confirm("確定要重置所有勾選狀態嗎？")) {
+      if (confirm("確定要重置所有行李勾選狀態嗎？")) {
         checklist.forEach(item => item.checked = false);
         saveChecklist();
         renderChecklist();
@@ -1341,23 +1434,139 @@
       localStorage.setItem('tokyo_luggage_checklist', JSON.stringify(checklist));
     }
 
-    /* ==================== 3. 頁面分頁切換 ==================== */
+    /* ==================== 3. 購物清單邏輯 (支援圖片與價格) ==================== */
+    const defaultShoppingList = [
+      { name: "迪士尼 25週年限定髮箍", price: "¥2,400", img: "", checked: false },
+      { name: "達菲/雪莉玫 吊飾娃娃", price: "¥2,600", img: "", checked: false },
+      { name: "龜屋萬年堂 生乳銅鑼燒", price: "¥350", img: "", checked: false },
+      { name: "I'm donut ? 人氣生甜甜圈", price: "¥400", img: "", checked: false }
+    ];
+
+    let shoppingList = JSON.parse(localStorage.getItem('tokyo_shopping_list')) || defaultShoppingList;
+    let tempUploadedImgBase64 = "";
+
+    function renderShoppingList() {
+      const container = document.getElementById("shoppingItemsList");
+      if (shoppingList.length === 0) {
+        container.innerHTML = `<div style="text-align:center; color:#94a3b8; padding:20px; font-size:13px;">購物清單目前是空的，快把想買的商品加進來吧！</div>`;
+        return;
+      }
+
+      container.innerHTML = shoppingList.map((item, index) => `
+        <div class="check-item ${item.checked ? 'done' : ''}" onclick="toggleShoppingCheck(${index}, event)">
+          <input type="checkbox" ${item.checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleShoppingCheck(${index});">
+          
+          ${item.img ? `<img src="${item.img}" class="shopping-item-img" onclick="openImgModal('${item.img}', event)" title="點擊放大圖片">` : ''}
+          
+          <span class="check-text">${item.name}</span>
+          
+          ${item.price ? `<span class="shopping-price-tag">${item.price}</span>` : ''}
+          
+          <button class="item-delete-btn" title="刪除此項" onclick="deleteShoppingItem(${index}, event)">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function toggleShoppingCheck(index, event) {
+      if (event && (event.target.tagName === 'BUTTON' || event.target.tagName === 'IMG')) return;
+      shoppingList[index].checked = !shoppingList[index].checked;
+      saveShoppingList();
+      renderShoppingList();
+    }
+
+    function handleImageSelected(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        tempUploadedImgBase64 = e.target.result;
+        document.getElementById("imageUploadLabel").innerText = "✅ 圖片已選取";
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function addNewShoppingItem() {
+      const nameInput = document.getElementById("shopItemName");
+      const priceInput = document.getElementById("shopItemPrice");
+      const name = nameInput.value.trim();
+      const price = priceInput.value.trim();
+
+      if (!name) {
+        alert("請輸入想購買的商品名稱！");
+        return;
+      }
+
+      shoppingList.push({
+        name: name,
+        price: price,
+        img: tempUploadedImgBase64,
+        checked: false
+      });
+
+      saveShoppingList();
+      renderShoppingList();
+
+      // 清空輸入欄位
+      nameInput.value = "";
+      priceInput.value = "";
+      tempUploadedImgBase64 = "";
+      document.getElementById("shopItemImageInput").value = "";
+      document.getElementById("imageUploadLabel").innerText = "上傳參考圖片";
+    }
+
+    function deleteShoppingItem(index, event) {
+      event.stopPropagation();
+      shoppingList.splice(index, 1);
+      saveShoppingList();
+      renderShoppingList();
+    }
+
+    function resetShoppingList() {
+      if (confirm("確定要重置所有購物清單的勾選狀態嗎？")) {
+        shoppingList.forEach(item => item.checked = false);
+        saveShoppingList();
+        renderShoppingList();
+      }
+    }
+
+    function saveShoppingList() {
+      localStorage.setItem('tokyo_shopping_list', JSON.stringify(shoppingList));
+    }
+
+    /* 圖片放大預覽 */
+    function openImgModal(imgSrc, event) {
+      if (event) event.stopPropagation();
+      document.getElementById("modalPreviewImg").src = imgSrc;
+      document.getElementById("imgModal").classList.add("active");
+    }
+
+    function closeImgModal() {
+      document.getElementById("imgModal").classList.remove("active");
+    }
+
+    /* ==================== 4. 頁面分頁切換 (3 Tabs) ==================== */
     function switchTab(tabName) {
       const pageItinerary = document.getElementById("pageItinerary");
       const pageChecklist = document.getElementById("pageChecklist");
+      const pageShopping = document.getElementById("pageShopping");
       const tabs = document.querySelectorAll(".bottom-tab");
 
       tabs.forEach(tab => tab.classList.remove("active"));
+      pageItinerary.classList.remove("active");
+      pageChecklist.classList.remove("active");
+      pageShopping.classList.remove("active");
 
       if (tabName === 'itinerary') {
         pageItinerary.classList.add("active");
-        pageChecklist.classList.remove("active");
         tabs[0].classList.add("active");
         setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 200);
-      } else {
+      } else if (tabName === 'checklist') {
         pageChecklist.classList.add("active");
-        pageItinerary.classList.remove("active");
         tabs[1].classList.add("active");
+      } else if (tabName === 'shopping') {
+        pageShopping.classList.add("active");
+        tabs[2].classList.add("active");
       }
     }
 
@@ -1366,6 +1575,7 @@
     renderTimeline();
     initMap();
     renderChecklist();
+    renderShoppingList();
   </script>
 </body>
 </html>
