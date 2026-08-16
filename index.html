@@ -201,6 +201,28 @@
       text-decoration: underline;
       word-break: break-all;
     }
+
+    /* 快捷多連結清單 */
+    .quick-links {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .quick-link-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 3px 8px;
+      background-color: #eff6ff;
+      color: #1d4ed8;
+      font-size: 11px;
+      font-weight: 600;
+      border-radius: 12px;
+      text-decoration: none;
+      border: 1px solid #bfdbfe;
+    }
   </style>
 </head>
 <body>
@@ -337,27 +359,33 @@
             time: "09:15", 
             title: "宮下公園 MIYASHITA PARK", 
             desc: "頂樓空中花園（08:00 開放），散步放鬆並俯瞰澀谷街景。",
-            location: "MIYASHITA PARK",
-            link: "https://maps.app.goo.gl/BtfZwL9ADrGLiMTs5"
+            mapUrl: "https://maps.app.goo.gl/BtfZwL9ADrGLiMTs5"
           },
           { 
             time: "10:00", 
             title: "澀谷 PARCO 6F 動漫天堂", 
-            desc: "步行約 5 分鐘抵達 PARCO 6F：\n• 任天堂 Nintendo TOKYO\n• 寶可夢中心 Pokémon Center\n• JUMP SHOP（需注意是否抽整理券）",
-            location: "澀谷 PARCO"
+            desc: "步行約 5 分鐘抵達 PARCO 6F：\n• 任天堂 Nintendo TOKYO\n• 寶可夢中心 Pokémon Center\n• JUMP SHOP（注意是否需抽整理券）",
+            mapUrl: "https://maps.app.goo.gl/D8UjWaWUh8hSmncM8",
+            quickLinks: [
+              { name: "任天堂", url: "https://maps.app.goo.gl/D8UjWaWUh8hSmncM8" },
+              { name: "寶可夢中心", url: "https://www.google.com/maps/place/寶可夢中心澀谷店/@35.6619557,139.6973155,18z" },
+              { name: "JUMP SHOP", url: "https://www.google.com/maps/place/Jump+Shop+Shibuya+Parco/@35.6619557,139.6973155,18z" }
+            ]
           },
           { 
             time: "11:30", 
             title: "SHIBUYA 109 百貨", 
             desc: "步行約 5 分鐘抵達 109 百貨逛女裝流行服飾。",
-            location: "SHIBUYA 109",
-            link: "https://maps.app.goo.gl/jm2vtUgpMF9o6oAu5"
+            mapUrl: "https://maps.app.goo.gl/jm2vtUgpMF9o6oAu5"
           },
           { 
             time: "12:30", 
             title: "午餐時間 (澀谷)", 
             desc: "選項推薦：\n1. 迴轉壽司（11:00 記得先去抽號碼牌）\n2. 炸豬排 とんかつ",
-            location: "澀谷"
+            quickLinks: [
+              { name: "活美登利 迴轉壽司", url: "https://maps.app.goo.gl/q1qWyvjsndB7mbnM9" },
+              { name: "炸豬排 とんかつ", url: "https://maps.app.goo.gl/2G3enLNQViYko8fAA" }
+            ]
           },
           { 
             time: "14:50", 
@@ -366,9 +394,33 @@
           },
           { 
             time: "15:10", 
-            title: "自由之丘：甜點與生活選物巡禮", 
-            desc: "🍩 15:10-16:00 I'm donut ? (2F用餐)\n🌿 16:05-16:45 TODAY'S SPECIAL (生活雜貨)\n🥐 16:50-17:10 C'EST UNE BONNE IDEE (人氣麵包)\n🏰 17:20-17:40 La vita (小義大利水都歐風造景)\n🍵 17:45-18:10 龜屋萬年堂 總本店 (生乳銅鑼燒/大福)",
-            location: "自由之丘"
+            title: "I'm donut ? 自由之丘店", 
+            desc: "超人氣生甜甜圈！二樓可用餐休息。",
+            location: "I'm donut ? Jiyugaoka station store"
+          },
+          { 
+            time: "16:05", 
+            title: "TODAY'S SPECIAL 自由之丘", 
+            desc: "質感生活雜貨、餐具、植栽與選物店。",
+            location: "TODAY'S SPECIAL Jiyugaoka"
+          },
+          { 
+            time: "16:50", 
+            title: "C'EST UNE BONNE IDEE", 
+            desc: "自由之丘在地人氣麵包烘焙坊。",
+            location: "C'EST UNE BONNE IDEE 自由が丘"
+          },
+          { 
+            time: "17:20", 
+            title: "小義大利 La vita", 
+            desc: "充滿歐風水都威尼斯運河與貢多拉船的拍照打卡點。",
+            mapUrl: "https://www.google.com/maps/place/小義大利+La+vita/@35.610669,139.6656369,17z"
+          },
+          { 
+            time: "17:45", 
+            title: "龜屋萬年堂 自由之丘總本店", 
+            desc: "必買伴手禮：生乳銅鑼燒、季節大福與和菓子。",
+            mapUrl: "https://www.google.com/maps/place/龜屋萬年堂+自由之丘總本店/@35.6073356,139.6500963,15z"
           },
           { 
             time: "18:20", 
@@ -379,14 +431,18 @@
             time: "19:20", 
             title: "SHIBUYA SKY 展望台俯瞰夜景", 
             desc: "預約 19:20 或 19:40 入場時段。\n📌 提醒：KKday 於 8/20 開放線上售票，記得提前預約！",
-            location: "SHIBUYA SKY",
+            mapUrl: "https://www.google.com/maps/place/澀谷+SKY/@35.6602038,139.6997816,16.62z",
             link: "https://www.kkday.com/zh-tw/product/133300-shibuya-sky-observatory-e-ticket-tokyo?cid=11798&pkg_oid=1429112&groupOid=999"
           },
           { 
             time: "21:00", 
             title: "晚餐 (澀谷或東京車站/京橋)", 
             desc: "【澀谷選項】\n• 澀谷牛舌 (營業至 23:00)\n\n【東京/京橋選項】\n• YAKINIKU USHIJIRUSHI 燒肉 (營業至 23:00)\n• Toritetsu Kyobashi 居酒屋 (營業至 01:00)",
-            location: "雷姆東京京橋飯店"
+            quickLinks: [
+              { name: "澀谷牛舌", url: "https://maps.app.goo.gl/tdoTHP1g4n1nMRzg6" },
+              { name: "東京燒肉 USHIJIRUSHI", url: "https://www.google.com/maps/place/YAKINIKU+USHIJIRUSHI/@35.6777312,139.7696088,16z" },
+              { name: "Toritetsu Kyobashi 居酒屋", url: "https://www.google.com/maps/search/?api=1&query=Toritetsu+Kyobashi" }
+            ]
           },
           { 
             time: "23:00", 
@@ -448,9 +504,18 @@
     function renderTimeline() {
       const dayData = itineraryData[currentDayIndex];
       timelineList.innerHTML = dayData.events.map(event => {
-        const mapSearchUrl = event.location 
-          ? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}` 
-          : null;
+        // 優先使用精確 mapUrl，若無則透過 location 產生 Google Maps 搜尋連結
+        let targetMapUrl = event.mapUrl;
+        if (!targetMapUrl && event.location) {
+          targetMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`;
+        }
+
+        // 快捷多連結按鈕 (例如午餐/晚餐/PARCO 6F 多店家)
+        const quickLinksHtml = event.quickLinks 
+          ? `<div class="quick-links">
+              ${event.quickLinks.map(ql => `<a href="${ql.url}" target="_blank" class="quick-link-chip">📍 ${ql.name}</a>`).join('')}
+             </div>`
+          : '';
 
         return `
           <div class="timeline-item">
@@ -459,10 +524,11 @@
             <div class="card">
               <div class="card-header">
                 <span class="card-title">${event.title}</span>
-                ${mapSearchUrl ? `<a href="${mapSearchUrl}" target="_blank" class="nav-btn">📍 導航</a>` : ''}
+                ${targetMapUrl ? `<a href="${targetMapUrl}" target="_blank" class="nav-btn">📍 導航</a>` : ''}
               </div>
               <p class="card-desc">${event.desc}</p>
-              ${event.link ? `<a href="${event.link}" target="_blank" class="card-link">🔗 開啟預約/網頁連結</a>` : ''}
+              ${event.link ? `<a href="${event.link}" target="_blank" class="card-link">🔗 開啟售票/預約連結</a>` : ''}
+              ${quickLinksHtml}
             </div>
           </div>
         `;
