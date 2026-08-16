@@ -37,7 +37,7 @@
       display: flex;
       flex-direction: column;
       position: relative;
-      padding-bottom: 25px;
+      padding-bottom: 75px;
       box-shadow: 0 0 25px rgba(0, 128, 138, 0.2);
       min-height: 100vh;
     }
@@ -63,6 +63,15 @@
       letter-spacing: 0.5px;
       color: #ffffff;
       text-shadow: 0 2px 6px rgba(0, 60, 70, 0.4);
+    }
+
+    /* 頁面切換 View */
+    .page-view {
+      display: none;
+    }
+
+    .page-view.active {
+      display: block;
     }
 
     /* 天數橫向導覽列 */
@@ -223,6 +232,188 @@
       text-decoration: none;
       border: 1px solid #bfdbfe;
     }
+
+    /* ==================== 行李清單專屬樣式 ==================== */
+    .checklist-container {
+      padding: 16px 20px;
+    }
+
+    .checklist-card {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 20px 18px;
+      box-shadow: 0 4px 15px rgba(0, 109, 119, 0.06);
+      border: 1px solid #e6f4f1;
+    }
+
+    .checklist-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 16px;
+      padding-bottom: 12px;
+      border-bottom: 2px dashed #e2e8f0;
+    }
+
+    .checklist-title {
+      font-size: 17px;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .reset-btn {
+      background: none;
+      border: 1px solid #cbd5e1;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 12px;
+      font-weight: 600;
+      color: #64748b;
+      cursor: pointer;
+    }
+
+    .checklist-items {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .check-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 10px 12px;
+      background-color: #f8fafc;
+      border-radius: 14px;
+      border: 1px solid #f1f5f9;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .check-item:hover {
+      background-color: #f0fdfa;
+      border-color: #ccfbf1;
+    }
+
+    .check-item input[type="checkbox"] {
+      width: 20px;
+      height: 20px;
+      margin-top: 1px;
+      accent-color: #00808a;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .check-text {
+      font-size: 14px;
+      font-weight: 600;
+      color: #334155;
+      line-height: 1.4;
+      flex: 1;
+      transition: all 0.2s ease;
+    }
+
+    /* 已完成劃線效果 */
+    .check-item.done {
+      background-color: #f1f5f9;
+      opacity: 0.6;
+    }
+
+    .check-item.done .check-text {
+      text-decoration: line-through;
+      color: #94a3b8;
+    }
+
+    .item-delete-btn {
+      background: none;
+      border: none;
+      color: #cbd5e1;
+      font-size: 15px;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    .item-delete-btn:hover {
+      color: #ef4444;
+    }
+
+    /* 新增項目輸入框 */
+    .add-item-box {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding-top: 14px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .add-item-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      font-size: 13px;
+      outline: none;
+      background-color: #f8fafc;
+    }
+
+    .add-item-input:focus {
+      border-color: #00808a;
+      background-color: #ffffff;
+    }
+
+    .add-item-btn {
+      padding: 10px 16px;
+      background: linear-gradient(135deg, #005b66 0%, #00808a 100%);
+      color: #ffffff;
+      font-size: 13px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    /* 底部 Tab 列 */
+    .bottom-nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      height: calc(60px + env(safe-area-inset-bottom));
+      padding-bottom: env(safe-area-inset-bottom);
+      background-color: #ffffff;
+      border-top: 1px solid #e6f4f1;
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      z-index: 20;
+    }
+
+    .bottom-tab {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      color: #94a3b8;
+      font-size: 12px;
+      border: none;
+      background: none;
+      cursor: pointer;
+      padding: 6px 0;
+    }
+
+    .bottom-tab.active {
+      color: #00808a;
+      font-weight: bold;
+    }
+
+    .tab-icon {
+      font-size: 20px;
+    }
   </style>
 </head>
 <body>
@@ -232,11 +423,47 @@
       <h1>8/31-9/4 東京自由行</h1>
     </header>
 
-    <div class="days-nav" id="daysNav"></div>
-    <div class="timeline-container" id="timelineList"></div>
+    <!-- 1. 行程頁面 -->
+    <div id="pageItinerary" class="page-view active">
+      <div class="days-nav" id="daysNav"></div>
+      <div class="timeline-container" id="timelineList"></div>
+    </div>
+
+    <!-- 2. 行李清單頁面 -->
+    <div id="pageChecklist" class="page-view">
+      <div class="checklist-container">
+        <div class="checklist-card">
+          <div class="checklist-header">
+            <div class="checklist-title">🧳 隨身與託運行李</div>
+            <button class="reset-btn" onclick="resetChecklist()">一鍵重置</button>
+          </div>
+
+          <div class="checklist-items" id="checklistItemsList"></div>
+
+          <!-- 自訂新增項目 -->
+          <div class="add-item-box">
+            <input type="text" id="newCheckItemInput" class="add-item-input" placeholder="新增其他行李物品..." onkeypress="handleChecklistKeyPress(event)">
+            <button class="add-item-btn" onclick="addNewCheckItem()">新增</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部 Tab 列 -->
+    <nav class="bottom-nav">
+      <button class="bottom-tab active" onclick="switchTab('itinerary')">
+        <span class="tab-icon">🗺️</span>
+        <span>行程</span>
+      </button>
+      <button class="bottom-tab" onclick="switchTab('checklist')">
+        <span class="tab-icon">🧳</span>
+        <span>行李清單</span>
+      </button>
+    </nav>
   </div>
 
   <script>
+    /* ==================== 1. 行程資料 ==================== */
     const itineraryData = [
       {
         dayLabel: "Day 1 (8/31)",
@@ -504,13 +731,11 @@
     function renderTimeline() {
       const dayData = itineraryData[currentDayIndex];
       timelineList.innerHTML = dayData.events.map(event => {
-        // 優先使用精確 mapUrl，若無則透過 location 產生 Google Maps 搜尋連結
         let targetMapUrl = event.mapUrl;
         if (!targetMapUrl && event.location) {
           targetMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`;
         }
 
-        // 快捷多連結按鈕 (例如午餐/晚餐/PARCO 6F 多店家)
         const quickLinksHtml = event.quickLinks 
           ? `<div class="quick-links">
               ${event.quickLinks.map(ql => `<a href="${ql.url}" target="_blank" class="quick-link-chip">📍 ${ql.name}</a>`).join('')}
@@ -541,8 +766,100 @@
       renderTimeline();
     }
 
+    /* ==================== 2. 行李清單邏輯 (LocalStorage 記憶) ==================== */
+    const defaultChecklist = [
+      { text: "防曬", checked: false },
+      { text: "衛生紙、濕紙巾", checked: false },
+      { text: "耳塞、牙刷", checked: false },
+      { text: "小塑膠袋（垃圾袋）", checked: false },
+      { text: "換洗包(護髮)、保養品、化妝品(卸妝等)、梳子", checked: false },
+      { text: "五天衣物", checked: false },
+      { text: "護照（含影本）", checked: false },
+      { text: "身分證", checked: false },
+      { text: "錢包（信用卡、日幣）", checked: false },
+      { text: "酒精、常備藥、OK繃", checked: false },
+      { text: "豆腐頭、充電線、行動電源", checked: false },
+      { text: "雨傘、外套", checked: false }
+    ];
+
+    let checklist = JSON.parse(localStorage.getItem('tokyo_luggage_checklist')) || defaultChecklist;
+
+    function renderChecklist() {
+      const container = document.getElementById("checklistItemsList");
+      container.innerHTML = checklist.map((item, index) => `
+        <div class="check-item ${item.checked ? 'done' : ''}" onclick="toggleCheck(${index}, event)">
+          <input type="checkbox" ${item.checked ? 'checked' : ''} onclick="event.stopPropagation(); toggleCheck(${index});">
+          <span class="check-text">${item.text}</span>
+          <button class="item-delete-btn" title="刪除此項" onclick="deleteCheckItem(${index}, event)">✕</button>
+        </div>
+      `).join('');
+    }
+
+    function toggleCheck(index, event) {
+      if (event && event.target.tagName === 'BUTTON') return;
+      checklist[index].checked = !checklist[index].checked;
+      saveChecklist();
+      renderChecklist();
+    }
+
+    function addNewCheckItem() {
+      const input = document.getElementById("newCheckItemInput");
+      const text = input.value.trim();
+      if (!text) return;
+      checklist.push({ text: text, checked: false });
+      saveChecklist();
+      renderChecklist();
+      input.value = "";
+    }
+
+    function handleChecklistKeyPress(event) {
+      if (event.key === 'Enter') {
+        addNewCheckItem();
+      }
+    }
+
+    function deleteCheckItem(index, event) {
+      event.stopPropagation();
+      checklist.splice(index, 1);
+      saveChecklist();
+      renderChecklist();
+    }
+
+    function resetChecklist() {
+      if (confirm("確定要重置所有勾選狀態嗎？")) {
+        checklist.forEach(item => item.checked = false);
+        saveChecklist();
+        renderChecklist();
+      }
+    }
+
+    function saveChecklist() {
+      localStorage.setItem('tokyo_luggage_checklist', JSON.stringify(checklist));
+    }
+
+    /* ==================== 3. 頁面分頁切換 ==================== */
+    function switchTab(tabName) {
+      const pageItinerary = document.getElementById("pageItinerary");
+      const pageChecklist = document.getElementById("pageChecklist");
+      const tabs = document.querySelectorAll(".bottom-tab");
+
+      tabs.forEach(tab => tab.classList.remove("active"));
+
+      if (tabName === 'itinerary') {
+        pageItinerary.classList.add("active");
+        pageChecklist.classList.remove("active");
+        tabs[0].classList.add("active");
+      } else {
+        pageChecklist.classList.add("active");
+        pageItinerary.classList.remove("active");
+        tabs[1].classList.add("active");
+      }
+    }
+
+    // 初始化渲染
     renderDayButtons();
     renderTimeline();
+    renderChecklist();
   </script>
 </body>
 </html>
