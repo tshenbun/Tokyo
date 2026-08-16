@@ -211,7 +211,6 @@
       word-break: break-all;
     }
 
-    /* 快捷多連結清單 */
     .quick-links {
       margin-top: 8px;
       display: flex;
@@ -231,6 +230,135 @@
       border-radius: 12px;
       text-decoration: none;
       border: 1px solid #bfdbfe;
+    }
+
+    /* ==================== 可愛機票卡片專屬樣式 ==================== */
+    .flight-ticket-card {
+      flex: 1;
+      background: linear-gradient(135deg, #ffffff 0%, #f0fdfa 100%);
+      border-radius: 18px;
+      padding: 0;
+      box-shadow: 0 4px 15px rgba(0, 128, 138, 0.12);
+      border: 1.5px solid #99f6e4;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .flight-ticket-top {
+      background: linear-gradient(135deg, #005b66 0%, #00808a 100%);
+      color: #ffffff;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .flight-badge {
+      background: rgba(255, 255, 255, 0.25);
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    .flight-ticket-body {
+      padding: 14px 16px;
+    }
+
+    .flight-airports {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .airport-box {
+      text-align: center;
+    }
+
+    .airport-code {
+      font-size: 22px;
+      font-weight: 800;
+      color: #0f766e;
+      letter-spacing: 1px;
+    }
+
+    .airport-city {
+      font-size: 12px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .airport-time {
+      font-size: 15px;
+      font-weight: 800;
+      color: #0f172a;
+      margin-top: 2px;
+    }
+
+    .airport-terminal {
+      font-size: 11px;
+      color: #64748b;
+    }
+
+    .flight-path {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 0 10px;
+    }
+
+    .flight-duration {
+      font-size: 11px;
+      font-weight: 700;
+      color: #0d9488;
+      margin-bottom: 2px;
+    }
+
+    .flight-line {
+      width: 100%;
+      height: 2px;
+      background: #ccfbf1;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .flight-plane-icon {
+      font-size: 16px;
+      transform: rotate(90deg);
+      background: #f0fdfa;
+      padding: 0 2px;
+    }
+
+    .flight-type {
+      font-size: 11px;
+      color: #94a3b8;
+      margin-top: 2px;
+    }
+
+    .flight-ticket-footer {
+      border-top: 1.5px dashed #b2f5ea;
+      padding: 8px 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background-color: #ffffff;
+      font-size: 11px;
+      color: #64748b;
+      position: relative;
+    }
+
+    .barcode-line {
+      letter-spacing: 2px;
+      font-family: monospace;
+      color: #94a3b8;
+      font-size: 12px;
+      font-weight: bold;
     }
 
     /* ==================== 行李清單專屬樣式 ==================== */
@@ -316,7 +444,6 @@
       transition: all 0.2s ease;
     }
 
-    /* 已完成劃線效果 */
     .check-item.done {
       background-color: #f1f5f9;
       opacity: 0.6;
@@ -340,7 +467,6 @@
       color: #ef4444;
     }
 
-    /* 新增項目輸入框 */
     .add-item-box {
       display: flex;
       gap: 8px;
@@ -440,7 +566,6 @@
 
           <div class="checklist-items" id="checklistItemsList"></div>
 
-          <!-- 自訂新增項目 -->
           <div class="add-item-box">
             <input type="text" id="newCheckItemInput" class="add-item-input" placeholder="新增其他行李物品..." onkeypress="handleChecklistKeyPress(event)">
             <button class="add-item-btn" onclick="addNewCheckItem()">新增</button>
@@ -468,7 +593,23 @@
       {
         dayLabel: "Day 1 (8/31)",
         events: [
-          { time: "12:35", title: "抵達成田機場", desc: "班機抵達，準備入境與搭車。" },
+          /* 去程機票卡片 */
+          {
+            type: "flight",
+            time: "07:55",
+            flightNo: "CI 102 (中華航空)",
+            flightDate: "8月31日 (週一)",
+            seatClass: "經濟艙",
+            depCity: "高雄",
+            depCode: "KHH",
+            depTime: "07:55",
+            depTerminal: "航廈 1",
+            arrCity: "東京成田",
+            arrCode: "NRT",
+            arrTime: "12:35",
+            arrTerminal: "航廈 2",
+            duration: "3h 40m 直飛"
+          },
           { 
             time: "14:35", 
             title: "搭車前往迪士尼大使大飯店", 
@@ -711,6 +852,23 @@
             title: "第3航廈貴賓室休息", 
             desc: "完成報到與安檢後，前往第3航廈貴賓室休息與用餐，準備搭機返台。",
             location: "羽田機場 第3航廈"
+          },
+          /* 回程機票卡片 */
+          {
+            type: "flight",
+            time: "14:30",
+            flightNo: "CI 221 (中華航空)",
+            flightDate: "9月4日 (週五)",
+            seatClass: "經濟艙",
+            depCity: "東京羽田",
+            depCode: "HND",
+            depTime: "14:30",
+            depTerminal: "航廈 3",
+            arrCity: "台北松山",
+            arrCode: "TSA",
+            arrTime: "16:55",
+            arrTerminal: "航廈 1",
+            duration: "3h 25m 直飛"
           }
         ]
       }
@@ -731,6 +889,50 @@
     function renderTimeline() {
       const dayData = itineraryData[currentDayIndex];
       timelineList.innerHTML = dayData.events.map(event => {
+        // 如果是機票專用卡片
+        if (event.type === 'flight') {
+          return `
+            <div class="timeline-item">
+              <div class="time-badge">${event.time}</div>
+              <div class="timeline-node"></div>
+              <div class="flight-ticket-card">
+                <div class="flight-ticket-top">
+                  <span>✈️ ${event.flightNo}</span>
+                  <span class="flight-badge">${event.seatClass}</span>
+                </div>
+                <div class="flight-ticket-body">
+                  <div class="flight-airports">
+                    <div class="airport-box">
+                      <div class="airport-code">${event.depCode}</div>
+                      <div class="airport-city">${event.depCity}</div>
+                      <div class="airport-time">${event.depTime}</div>
+                      <div class="airport-terminal">${event.depTerminal}</div>
+                    </div>
+                    <div class="flight-path">
+                      <span class="flight-duration">${event.duration}</span>
+                      <div class="flight-line">
+                        <span class="flight-plane-icon">✈</span>
+                      </div>
+                      <span class="flight-type">${event.flightDate}</span>
+                    </div>
+                    <div class="airport-box">
+                      <div class="airport-code">${event.arrCode}</div>
+                      <div class="airport-city">${event.arrCity}</div>
+                      <div class="airport-time">${event.arrTime}</div>
+                      <div class="airport-terminal">${event.arrTerminal}</div>
+                    </div>
+                  </div>
+                </div>
+                <div class="flight-ticket-footer">
+                  <span>登機證 BOARDING PASS</span>
+                  <span class="barcode-line">||||| | |||| ||| |</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }
+
+        // 一般行程卡片
         let targetMapUrl = event.mapUrl;
         if (!targetMapUrl && event.location) {
           targetMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`;
