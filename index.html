@@ -11,6 +11,10 @@
   <meta name="apple-mobile-web-app-title" content="東京行程">
   <link rel="apple-touch-icon" href="icon.png">
 
+  <!-- 引入 Leaflet 地圖樣式與腳本 (免費、開源、支援手機觸控) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+
   <style>
     * {
       box-sizing: border-box;
@@ -52,7 +56,7 @@
       border-bottom-right-radius: 24px;
       position: sticky;
       top: 0;
-      z-index: 10;
+      z-index: 1000;
       box-shadow: 0 4px 15px rgba(0, 91, 102, 0.35);
       border-bottom: 2px solid #a5f3fc;
     }
@@ -107,9 +111,51 @@
       box-shadow: 0 4px 12px rgba(0, 109, 119, 0.3);
     }
 
+    /* ==================== 簡易路線地圖樣式 ==================== */
+    .map-wrapper {
+      margin: 0 16px 16px 16px;
+      background: #ffffff;
+      border-radius: 18px;
+      padding: 10px;
+      box-shadow: 0 4px 12px rgba(0, 128, 138, 0.08);
+      border: 1.5px solid #ccfbf1;
+    }
+
+    .map-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      padding: 0 4px;
+    }
+
+    .map-title {
+      font-size: 13px;
+      font-weight: 800;
+      color: #0f766e;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .map-badge {
+      font-size: 11px;
+      color: #64748b;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 10px;
+    }
+
+    #routeMap {
+      width: 100%;
+      height: 200px;
+      border-radius: 14px;
+      z-index: 1;
+    }
+
     /* 時間軸區域 */
     .timeline-container {
-      padding: 8px 16px 20px 16px;
+      padding: 0 16px 20px 16px;
       position: relative;
     }
 
@@ -515,7 +561,7 @@
       display: flex;
       justify-content: space-around;
       align-items: center;
-      z-index: 20;
+      z-index: 1000;
     }
 
     .bottom-tab {
@@ -552,6 +598,16 @@
     <!-- 1. 行程頁面 -->
     <div id="pageItinerary" class="page-view active">
       <div class="days-nav" id="daysNav"></div>
+      
+      <!-- 簡易路線地圖容器 (動態切換顯示) -->
+      <div class="map-wrapper" id="mapWrapper">
+        <div class="map-header">
+          <div class="map-title">📍 <span id="mapDayTitle">Day 1 路線地圖</span></div>
+          <span class="map-badge" id="mapSubtitle">成田機場 ➔ 迪士尼大使大飯店</span>
+        </div>
+        <div id="routeMap"></div>
+      </div>
+
       <div class="timeline-container" id="timelineList"></div>
     </div>
 
@@ -588,12 +644,33 @@
   </div>
 
   <script>
-    /* ==================== 1. 行程資料 ==================== */
+    /* ==================== 1. 行程與地圖資料 ==================== */
     const itineraryData = [
       {
         dayLabel: "Day 1 (8/31)",
+        mapInfo: {
+          title: "Day 1 路線地圖",
+          subtitle: "成田機場 ➔ 迪士尼大使大飯店 (經灣岸路線)",
+          center: [35.70, 140.10],
+          zoom: 9,
+          markers: [
+            { lat: 35.7647, lng: 140.3863, title: "✈️ 成田機場 (NRT)", desc: "第2航廈 17號月台搭乘利木津巴士" },
+            { lat: 35.6329, lng: 139.8872, title: "🏰 迪士尼大使大飯店", desc: "第一晚入住飯店" },
+            { lat: 35.6812, lng: 139.7671, title: "🏢 東京車站", desc: "重要交通轉運地標" }
+          ],
+          routes: [
+            // 成田機場 ➔ 經東關東自動車道/灣岸線 ➔ 迪士尼大使大飯店
+            [
+              [35.7647, 140.3863],
+              [35.7330, 140.2850],
+              [35.7050, 140.1500],
+              [35.6700, 140.0500],
+              [35.6600, 139.9500],
+              [35.6329, 139.8872]
+            ]
+          ]
+        },
         events: [
-          /* 去程機票卡片 */
           {
             type: "flight",
             time: "07:55",
@@ -853,7 +930,6 @@
             desc: "完成報到與安檢後，前往第3航廈貴賓室休息與用餐，準備搭機返台。",
             location: "羽田機場 第3航廈"
           },
-          /* 回程機票卡片 */
           {
             type: "flight",
             time: "14:30",
@@ -877,6 +953,73 @@
     let currentDayIndex = 0;
     const daysNav = document.getElementById("daysNav");
     const timelineList = document.getElementById("timelineList");
+    let mapInstance = null;
+    let mapLayerGroup = null;
+
+    /* 初始化 Leaflet 地圖 */
+    function initMap() {
+      mapInstance = L.map('routeMap', {
+        zoomControl: true,
+        attributionControl: false
+      }).setView([35.70, 140.10], 9);
+
+      // 使用清新簡潔的 OpenStreetMap 圖磚
+      L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 18
+      }).addTo(mapInstance);
+
+      mapLayerGroup = L.layerGroup().addTo(mapInstance);
+      updateDayMap();
+    }
+
+    /* 更新當日地圖的地標與路線 */
+    function updateDayMap() {
+      if (!mapInstance || !mapLayerGroup) return;
+      mapLayerGroup.clearLayers();
+
+      const dayData = itineraryData[currentDayIndex];
+      const mapWrapper = document.getElementById("mapWrapper");
+
+      if (!dayData.mapInfo) {
+        mapWrapper.style.display = "none";
+        return;
+      }
+
+      mapWrapper.style.display = "block";
+      document.getElementById("mapDayTitle").innerText = dayData.mapInfo.title;
+      document.getElementById("mapSubtitle").innerText = dayData.mapInfo.subtitle;
+
+      // 繪製地標 Marker
+      if (dayData.mapInfo.markers) {
+        dayData.mapInfo.markers.forEach(m => {
+          const marker = L.circleMarker([m.lat, m.lng], {
+            radius: 8,
+            fillColor: "#00808a",
+            color: "#ffffff",
+            weight: 2.5,
+            opacity: 1,
+            fillOpacity: 0.95
+          }).addTo(mapLayerGroup);
+
+          marker.bindPopup(`<strong>${m.title}</strong><br><span style="font-size:12px;color:#64748b;">${m.desc}</span>`);
+        });
+      }
+
+      // 繪製路線 Polyline
+      if (dayData.mapInfo.routes) {
+        dayData.mapInfo.routes.forEach(routeCoords => {
+          L.polyline(routeCoords, {
+            color: "#00808a",
+            weight: 4,
+            opacity: 0.85,
+            dashArray: "6, 8"
+          }).addTo(mapLayerGroup);
+        });
+      }
+
+      mapInstance.setView(dayData.mapInfo.center, dayData.mapInfo.zoom);
+      setTimeout(() => { mapInstance.invalidateSize(); }, 200);
+    }
 
     function renderDayButtons() {
       daysNav.innerHTML = itineraryData.map((day, index) => `
@@ -889,7 +1032,6 @@
     function renderTimeline() {
       const dayData = itineraryData[currentDayIndex];
       timelineList.innerHTML = dayData.events.map(event => {
-        // 如果是機票專用卡片
         if (event.type === 'flight') {
           return `
             <div class="timeline-item">
@@ -932,7 +1074,6 @@
           `;
         }
 
-        // 一般行程卡片
         let targetMapUrl = event.mapUrl;
         if (!targetMapUrl && event.location) {
           targetMapUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(event.location)}`;
@@ -966,6 +1107,7 @@
       currentDayIndex = index;
       renderDayButtons();
       renderTimeline();
+      updateDayMap();
     }
 
     /* ==================== 2. 行李清單邏輯 (LocalStorage 記憶) ==================== */
@@ -1051,6 +1193,7 @@
         pageItinerary.classList.add("active");
         pageChecklist.classList.remove("active");
         tabs[0].classList.add("active");
+        setTimeout(() => { if (mapInstance) mapInstance.invalidateSize(); }, 200);
       } else {
         pageChecklist.classList.add("active");
         pageItinerary.classList.remove("active");
@@ -1058,9 +1201,10 @@
       }
     }
 
-    // 初始化渲染
+    // 初始化網頁
     renderDayButtons();
     renderTimeline();
+    initMap();
     renderChecklist();
   </script>
 </body>
